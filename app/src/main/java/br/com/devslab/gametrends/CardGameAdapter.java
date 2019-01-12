@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -23,7 +22,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import br.com.devslab.gametrends.util.APIClient;
 import butterknife.BindView;
@@ -48,29 +46,26 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
         }
     }
 
-    public interface CardFilmeAdapterOnclickHandler{
+    public interface CardGameAdapterOnclickHandler {
         void onCardClick(String jsonFilme);
     }
 
     private ArrayList<String> listaGames;
-    private CardFilmeAdapterOnclickHandler mHandler;
+    private CardGameAdapterOnclickHandler mHandler;
     private Context mContext;
     private RequestQueue mRequestQueue;
 
-    public void setListaGames(ArrayList<String> listaGames) {
-        this.listaGames = listaGames;
-    }
-
     public void addItens(ArrayList<String> moreItens) {
-        if(listaGames == null){
-            listaGames = new ArrayList<>();
-        };
-
         listaGames.addAll(moreItens);
         notifyDataSetChanged();
     }
 
-    public CardGameAdapter(CardFilmeAdapterOnclickHandler handler, Context context, RequestQueue requestQueue){
+    public void clearGames(){
+        listaGames.clear();
+        notifyDataSetChanged();
+    }
+
+    public CardGameAdapter(CardGameAdapterOnclickHandler handler, Context context, RequestQueue requestQueue){
         this.mHandler = handler;
         this.mContext = context;
         this.listaGames = new ArrayList<>();
@@ -126,47 +121,34 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
 
         final String cover = idCover;
 
-        holder.jsObjRequest = new StringRequest
-                (Request.Method.POST, "https://api-v3.igdb.com/covers", new Response.Listener<String>() {
+        holder.jsObjRequest = APIClient.getCoverGameRequest(new Response.Listener<String>() {
 
-                    @Override
-                    public void onResponse(String response) {
+            @Override
+            public void onResponse(String response) {
 
-                        try {
-                            String imgId = new JSONArray(response).getJSONObject(0).getString("image_id");
+                try {
+                    String imgId = new JSONArray(response).getJSONObject(0).getString("image_id");
 
-                            String urlImg = "https://images.igdb.com/igdb/image/upload/t_original/" + imgId + ".jpg";
+                    String urlImg = "https://images.igdb.com/igdb/image/upload/t_original/" + imgId + ".jpg";
 
-                            Glide.with(mContext).load(urlImg).into(holder.cover);
+                    Glide.with(mContext).load(urlImg).into(holder.cover);
 
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
 
-                }, new Response.ErrorListener() {
+        },
+                new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d("ERRO", "ERRO REQUEST");
                         error.printStackTrace();
                     }
-                }){
-
-            @Override
-            public Map<String, String> getHeaders() {
-                return APIClient.getRequestHeaders();
-            }
-
-            @Override
-            public byte[] getBody() {
-                String requestBody =
-                        "fields *; where id=" + cover + ";";
-
-                return requestBody.getBytes();
-            }
-        };
+                }
+        , Integer.valueOf(cover));
 
         mRequestQueue.add(holder.jsObjRequest);
     }

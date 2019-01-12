@@ -1,5 +1,6 @@
 package br.com.devslab.gametrends;
 
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,24 +23,25 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class GamesListActivity extends AppCompatActivity implements CardGameAdapter.CardFilmeAdapterOnclickHandler {
+public class GamesListActivity extends AppCompatActivity implements CardGameAdapter.CardGameAdapterOnclickHandler {
 
-    private ArrayList<String> gamesList = new ArrayList<>();
     private CardGameAdapter mAdapter;
     private LinearLayoutManager mManager;
 
     @BindView(R.id.recycler_games)
     RecyclerView mRecyclerView;
 
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+
     RequestQueue mRequestQueue;
 
     private boolean isLoading = true;
 
-    private static final Integer PAGE_SIZE = 50;
+    private static final Integer PAGE_SIZE = 5;
 
     private Integer offset = 0;
 
-    //Based on https://medium.com/@etiennelawlor/pagination-with-recyclerview-1cb7e66a502b
     private RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -61,6 +63,10 @@ public class GamesListActivity extends AppCompatActivity implements CardGameAdap
         }
     };
 
+    private void updateRefreshing() {
+        mSwipeRefreshLayout.setRefreshing(isLoading);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,14 +81,24 @@ public class GamesListActivity extends AppCompatActivity implements CardGameAdap
 
         mRecyclerView.setLayoutManager(mManager);
 
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+
+            @Override
+            public void onRefresh() {
+                offset = 0;
+                mAdapter.clearGames();
+                queryGames();
+            }
+        });
+
         queryGames();
 
     }
 
     private void queryGames(){
 
-        gamesList.clear();
         isLoading = true;
+        updateRefreshing();
 
         StringRequest request = APIClient.getPopularGamesRequest(new Response.Listener<String>() {
 
@@ -101,6 +117,7 @@ public class GamesListActivity extends AppCompatActivity implements CardGameAdap
                     isLoading = false;
 
                     offset = offset + PAGE_SIZE;
+                    updateRefreshing();
 
 
                 } catch (JSONException e) {

@@ -1,5 +1,6 @@
 package br.com.devslab.gametrends.util;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -29,7 +30,7 @@ public class APIClient {
         return params;
     }
 
-    public static StringRequest getPopularGamesRequest(Response.Listener<String> responseListener, Response.ErrorListener responseErrorListener, final Integer limit, final Integer offSet){
+    public static StringRequest getPopularGamesRequest(@NonNull Response.Listener<String> responseListener, @NonNull Response.ErrorListener responseErrorListener, @NonNull final Integer limit, @NonNull final Integer offSet){
         return new StringRequest(Request.Method.POST, "https://api-v3.igdb.com/games", responseListener, responseErrorListener){
 
             @Override
@@ -40,11 +41,29 @@ public class APIClient {
             @Override
             public byte[] getBody() {
                 String requestBody =
-                        "fields name, summary,cover, rating, screenshots, platforms, videos, rating, popularity;\n" +
-                                "where cover != null & screenshots != null & platforms = (48, 49);\n" +
-                                "sort rating :desc;\n" +
+                        "fields name, summary, cover, rating, screenshots, videos, rating, popularity;\n" +
+                                "where cover != null & screenshots != null;\n" +
+                                "sort popularity :desc;\n" +
                                 "limit " + limit + ";\n" +
                                 "offset " + offSet + ";";
+
+                return requestBody.getBytes();
+            }
+        };
+    }
+
+    public static StringRequest getCoverGameRequest(@NonNull Response.Listener<String> responseListener, @NonNull Response.ErrorListener responseErrorListener, @NonNull final Integer id){
+        return new StringRequest(Request.Method.POST, "https://api-v3.igdb.com/covers", responseListener, responseErrorListener){
+
+            @Override
+            public Map<String, String> getHeaders() {
+                return APIClient.getRequestHeaders();
+            }
+
+            @Override
+            public byte[] getBody() {
+                String requestBody =
+                        "fields *; where id=" + id + ";";
 
                 return requestBody.getBytes();
             }
