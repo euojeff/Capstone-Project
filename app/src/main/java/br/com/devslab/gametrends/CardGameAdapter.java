@@ -61,8 +61,9 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
     }
 
     public void clearGames(){
+        Integer size = listaGames.size();
         listaGames.clear();
-        notifyDataSetChanged();
+        notifyItemRangeRemoved(0, size);
     }
 
     public CardGameAdapter(CardGameAdapterOnclickHandler handler, Context context, RequestQueue requestQueue){
@@ -97,6 +98,7 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
         }
     }
 
+
     @Override
     public void onBindViewHolder(final CardGameAdapter.CardGameHolder holder, int i) {
         final int posicao = i;
@@ -114,42 +116,14 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
 
         try {
             JSONObject game = new JSONObject(listaGames.get(i));
-            idCover = game.getString("cover");
+            idCover = game.getJSONObject("cover").getString("image_id");
+
+            String urlImg = "https://images.igdb.com/igdb/image/upload/t_original/" + idCover + ".jpg";
+            Glide.with(mContext).clear(holder.cover);
+            Glide.with(mContext).load(urlImg).into(holder.cover);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        final String cover = idCover;
-
-        holder.jsObjRequest = APIClient.getCoverGameRequest(new Response.Listener<String>() {
-
-            @Override
-            public void onResponse(String response) {
-
-                try {
-                    String imgId = new JSONArray(response).getJSONObject(0).getString("image_id");
-
-                    String urlImg = "https://images.igdb.com/igdb/image/upload/t_original/" + imgId + ".jpg";
-
-                    Glide.with(mContext).load(urlImg).into(holder.cover);
-
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        },
-                new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("ERRO", "ERRO REQUEST");
-                        error.printStackTrace();
-                    }
-                }
-        , Integer.valueOf(cover));
-
-        mRequestQueue.add(holder.jsObjRequest);
     }
 }

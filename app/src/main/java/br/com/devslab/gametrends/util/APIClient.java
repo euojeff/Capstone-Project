@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
@@ -30,8 +31,12 @@ public class APIClient {
         return params;
     }
 
-    public static StringRequest getPopularGamesRequest(@NonNull Response.Listener<String> responseListener, @NonNull Response.ErrorListener responseErrorListener, @NonNull final Integer limit, @NonNull final Integer offSet){
-        return new StringRequest(Request.Method.POST, "https://api-v3.igdb.com/games", responseListener, responseErrorListener){
+    public static void getPopularGamesRequest(@NonNull RequestQueue requestQueue,
+                                              @NonNull Response.Listener<String> responseListener,
+                                              @NonNull Response.ErrorListener responseErrorListener,
+                                              @NonNull final Integer limit,
+                                              @NonNull final Integer offSet){
+        StringRequest request = new StringRequest(Request.Method.POST, "https://api-v3.igdb.com/games", responseListener, responseErrorListener){
 
             @Override
             public Map<String, String> getHeaders() {
@@ -41,7 +46,7 @@ public class APIClient {
             @Override
             public byte[] getBody() {
                 String requestBody =
-                        "fields name, summary, cover, rating, screenshots, videos, rating, popularity;\n" +
+                        "fields name, summary, cover.*, rating, screenshots, videos, rating, popularity;\n" +
                                 "where cover != null & screenshots != null;\n" +
                                 "sort popularity :desc;\n" +
                                 "limit " + limit + ";\n" +
@@ -50,10 +55,15 @@ public class APIClient {
                 return requestBody.getBytes();
             }
         };
+
+        requestQueue.add(request);
     }
 
-    public static StringRequest getCoverGameRequest(@NonNull Response.Listener<String> responseListener, @NonNull Response.ErrorListener responseErrorListener, @NonNull final Integer id){
-        return new StringRequest(Request.Method.POST, "https://api-v3.igdb.com/covers", responseListener, responseErrorListener){
+    public static void getCoverGameRequest(@NonNull RequestQueue requestQueue,
+                                                    @NonNull Response.Listener<String> responseListener,
+                                                    @NonNull Response.ErrorListener responseErrorListener,
+                                                    @NonNull final Integer id){
+        StringRequest request = new StringRequest(Request.Method.POST, "https://api-v3.igdb.com/covers", responseListener, responseErrorListener){
 
             @Override
             public Map<String, String> getHeaders() {
@@ -68,5 +78,7 @@ public class APIClient {
                 return requestBody.getBytes();
             }
         };
+
+        requestQueue.add(request);
     }
 }
