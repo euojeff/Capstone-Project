@@ -1,29 +1,10 @@
 package br.com.devslab.gametrends;
 
 import android.net.Uri;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.Gravity;
-
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-
-import java.util.ArrayList;
-
-import br.com.devslab.gametrends.util.APIClient;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 
 public class GamesListActivity extends AppCompatActivity implements GamesFragment.OnFragmentInteractionListener {
@@ -34,14 +15,17 @@ public class GamesListActivity extends AppCompatActivity implements GamesFragmen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_games_list);
 
-        if(savedInstanceState == null) {
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            GamesFragment gf = new GamesFragment();
 
-            fragmentManager.beginTransaction()
-                    .add(R.id.game_list_container, gf)
-                    .commit();
-        }
+        TabAdapter adapter = new TabAdapter( getSupportFragmentManager());
+        adapter.adicionar( new GamesFragment() , "Populares");
+        adapter.adicionar( new GamesFragment(), "Lançamentos");
+        adapter.adicionar( new GamesFragment(), "Favoritos");
+
+        ViewPager viewPager = findViewById(R.id.abas_view_pager);
+        viewPager.setAdapter(adapter);
+
+        TabLayout tabLayout = findViewById(R.id.abas);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
