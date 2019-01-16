@@ -13,6 +13,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,10 +34,10 @@ public class APIClient {
     }
 
     public static void getPopularGamesRequest(@NonNull RequestQueue requestQueue,
-                                              @NonNull Response.Listener<String> responseListener,
-                                              @NonNull Response.ErrorListener responseErrorListener,
-                                              @NonNull final Integer limit,
-                                              @NonNull final Integer offSet){
+                                                   @NonNull Response.Listener<String> responseListener,
+                                                   @NonNull Response.ErrorListener responseErrorListener,
+                                                   @NonNull final Integer limit,
+                                                   @NonNull final Integer offSet){
         StringRequest request = new StringRequest(Request.Method.POST, "https://api-v3.igdb.com/games", responseListener, responseErrorListener){
 
             @Override
@@ -46,9 +48,41 @@ public class APIClient {
             @Override
             public byte[] getBody() {
                 String requestBody =
-                        "fields name, summary, cover.*, rating, screenshots, videos, rating, popularity;\n" +
-                                "where cover != null & screenshots != null;\n" +
+                        "fields name, summary, cover.*, rating, screenshots, videos, rating, popularity, first_release_date;\n" +
+                                "where platforms = (48) & cover != null & screenshots != null;\n" +
                                 "sort popularity :desc;\n" +
+                                "limit " + limit + ";\n" +
+                                "offset " + offSet + ";";
+
+                return requestBody.getBytes();
+            }
+        };
+
+        requestQueue.add(request);
+    }
+
+
+    public static void getCommingGamesRequest(@NonNull RequestQueue requestQueue,
+                                              @NonNull Response.Listener<String> responseListener,
+                                              @NonNull Response.ErrorListener responseErrorListener,
+                                              @NonNull final Integer limit,
+                                              @NonNull final Integer offSet){
+
+        final long unixTimeNow = System.currentTimeMillis() / 1000L;
+
+        StringRequest request = new StringRequest(Request.Method.POST, "https://api-v3.igdb.com/games", responseListener, responseErrorListener){
+
+            @Override
+            public Map<String, String> getHeaders() {
+                return APIClient.getRequestHeaders();
+            }
+
+            @Override
+            public byte[] getBody() {
+                String requestBody =
+                        "fields name, summary, cover.*, rating, screenshots, videos, rating, popularity, first_release_date;\n" +
+                                "where platforms = (48) & cover != null & screenshots != null & first_release_date > " + unixTimeNow + ";\n" +
+                                "sort first_release_date :asc;\n" +
                                 "limit " + limit + ";\n" +
                                 "offset " + offSet + ";";
 

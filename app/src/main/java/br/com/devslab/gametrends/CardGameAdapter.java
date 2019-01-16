@@ -38,7 +38,7 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
     }
 
     public interface CardGameAdapterOnclickHandler {
-        void onCardClick(String jsonFilme);
+        void onCardClick(String jsonGame);
     }
 
     private ArrayList<String> listaGames;
@@ -85,12 +85,10 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
 
         String idCover = "-1";
 
-//            FilmeJsonHelper filme = new FilmeJsonHelper(listaFilmes.get(i));
-
             holder.mCard.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    mHandler.onCardClick(listaFilmes.get(posicao));
+                    mHandler.onCardClick(listaGames.get(posicao));
                 }
             });
 

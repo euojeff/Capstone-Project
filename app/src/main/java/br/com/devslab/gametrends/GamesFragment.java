@@ -37,10 +37,14 @@ import butterknife.ButterKnife;
  * create an instance of this fragment.
  */
 public class GamesFragment extends Fragment implements CardGameAdapter.CardGameAdapterOnclickHandler {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+
+    public enum QueryTypeEnum{
+        POPULAR,
+        COMMING,
+        FAVORITE
+    };
+
+    private static final String ARG_QUERY_TYPE = "ARG_QUERY_TYPE";
 
 
     @BindView(R.id.recycler_games)
@@ -59,9 +63,7 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
 
     RequestQueue mRequestQueue;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private QueryTypeEnum mQueryType;
 
     private RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -93,39 +95,58 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
         isLoading = true;
         updateRefreshing();
 
-        APIClient.getPopularGamesRequest(mRequestQueue, new Response.Listener<String>() {
 
-            @Override
-            public void onResponse(String response) {
+        final Response.Listener<String> response =
+                new Response.Listener<String>() {
 
-                try {
-                    JSONArray itens = new JSONArray(response);
-                    ArrayList<String> newItens = new ArrayList<>();
+                    @Override
+                    public void onResponse(String response) {
 
-                    for(int i = 0; i < itens.length(); i++){
-                        newItens.add(itens.getJSONObject(i).toString());
+                        try {
+                            JSONArray itens = new JSONArray(response);
+                            ArrayList<String> newItens = new ArrayList<>();
+
+                            for(int i = 0; i < itens.length(); i++){
+                                newItens.add(itens.getJSONObject(i).toString());
+                            }
+
+                            mAdapter.addItens(newItens);
+                            isLoading = false;
+
+                            offset = offset + PAGE_SIZE;
+                            updateRefreshing();
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
+                };
 
-                    mAdapter.addItens(newItens);
-                    isLoading = false;
+        final Response.ErrorListener responseErro =
+                new Response.ErrorListener() {
 
-                    offset = offset + PAGE_SIZE;
-                    updateRefreshing();
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("ERRO", "ERRO REQUEST");
+                        error.printStackTrace();
+                        isLoading = false;
+                    }
+                };
 
+        if(QueryTypeEnum.POPULAR.equals(mQueryType)){
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new Response.ErrorListener() {
+            APIClient.getPopularGamesRequest(mRequestQueue, response, responseErro, PAGE_SIZE, offset);
 
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("ERRO", "ERRO REQUEST");
-                error.printStackTrace();
-                isLoading = false;
-            }
-        }, PAGE_SIZE, offset);
+        }else if(QueryTypeEnum.COMMING.equals(mQueryType)){
+
+            APIClient.getCommingGamesRequest(mRequestQueue, response, responseErro, PAGE_SIZE, offset);
+
+        }else if(QueryTypeEnum.FAVORITE.equals(mQueryType)){
+
+            APIClient.getPopularGamesRequest(mRequestQueue, response, responseErro, PAGE_SIZE, offset);
+        }
+
 
     }
 
@@ -136,20 +157,19 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
         // Required empty public constructor
     }
 
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param queryTypeEnum Parameter 1.
      * @return A new instance of fragment GamesFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static GamesFragment newInstance(String param1, String param2) {
+    public static GamesFragment newInstance(QueryTypeEnum queryTypeEnum) {
         GamesFragment fragment = new GamesFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putSerializable(ARG_QUERY_TYPE, queryTypeEnum);
         fragment.setArguments(args);
         return fragment;
     }
@@ -158,8 +178,7 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mQueryType = (QueryTypeEnum) getArguments().getSerializable(ARG_QUERY_TYPE);
         }
     }
 
@@ -200,10 +219,9 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
         return rootView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void onSelectGame(String jsonGame) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onRequestOpenGameDetail(jsonGame);
         }
     }
 
@@ -226,7 +244,7 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
 
     @Override
     public void onCardClick(String jsonFilme) {
-
+        onSelectGame(jsonFilme);
     }
 
     /**
@@ -240,7 +258,6 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onRequestOpenGameDetail(String json);
     }
 }

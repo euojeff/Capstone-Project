@@ -5,6 +5,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 
 public class GamesListActivity extends AppCompatActivity implements GamesFragment.OnFragmentInteractionListener {
@@ -17,9 +18,9 @@ public class GamesListActivity extends AppCompatActivity implements GamesFragmen
 
 
         TabAdapter adapter = new TabAdapter( getSupportFragmentManager());
-        adapter.adicionar( new GamesFragment() , "Populares");
-        adapter.adicionar( new GamesFragment(), "Lançamentos");
-        adapter.adicionar( new GamesFragment(), "Favoritos");
+        adapter.adicionar( GamesFragment.newInstance(GamesFragment.QueryTypeEnum.POPULAR) , "Popular");
+        adapter.adicionar( GamesFragment.newInstance(GamesFragment.QueryTypeEnum.COMMING), "Comming");
+        adapter.adicionar( GamesFragment.newInstance(GamesFragment.QueryTypeEnum.POPULAR), "Favorite");
 
         ViewPager viewPager = findViewById(R.id.abas_view_pager);
         viewPager.setAdapter(adapter);
@@ -29,7 +30,8 @@ public class GamesListActivity extends AppCompatActivity implements GamesFragmen
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
-
+    public void onRequestOpenGameDetail(String json) {
+        //Todo imlementar chamada para detalhe
+        Log.i("TODO", "Implementar Detalhe");
     }
 }
