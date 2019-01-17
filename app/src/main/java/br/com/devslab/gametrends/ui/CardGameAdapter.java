@@ -1,5 +1,6 @@
-package br.com.devslab.gametrends;
+package br.com.devslab.gametrends.ui;
 
+import br.com.devslab.gametrends.R;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;

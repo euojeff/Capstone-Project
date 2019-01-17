@@ -93,26 +93,4 @@ public class APIClient {
         requestQueue.add(request);
     }
 
-    public static void getCoverGameRequest(@NonNull RequestQueue requestQueue,
-                                                    @NonNull Response.Listener<String> responseListener,
-                                                    @NonNull Response.ErrorListener responseErrorListener,
-                                                    @NonNull final Integer id){
-        StringRequest request = new StringRequest(Request.Method.POST, "https://api-v3.igdb.com/covers", responseListener, responseErrorListener){
-
-            @Override
-            public Map<String, String> getHeaders() {
-                return APIClient.getRequestHeaders();
-            }
-
-            @Override
-            public byte[] getBody() {
-                String requestBody =
-                        "fields *; where id=" + id + ";";
-
-                return requestBody.getBytes();
-            }
-        };
-
-        requestQueue.add(request);
-    }
 }

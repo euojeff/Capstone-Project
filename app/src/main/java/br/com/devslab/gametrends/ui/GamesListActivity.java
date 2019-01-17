@@ -1,11 +1,12 @@
-package br.com.devslab.gametrends;
+package br.com.devslab.gametrends.ui;
 
-import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+
+import br.com.devslab.gametrends.R;
 
 
 public class GamesListActivity extends AppCompatActivity implements GamesFragment.OnFragmentInteractionListener {

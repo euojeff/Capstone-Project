@@ -1,4 +1,4 @@
-package br.com.devslab.gametrends;
+package br.com.devslab.gametrends.ui;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
