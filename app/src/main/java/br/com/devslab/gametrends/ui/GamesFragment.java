@@ -14,16 +14,12 @@ import android.view.ViewGroup;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 
-import org.json.JSONArray;
-import org.json.JSONException;
+import java.util.List;
 
-import java.util.ArrayList;
-
-import br.com.devslab.gametrends.util.APIClient;
+import br.com.devslab.gametrends.data.Game;
+import br.com.devslab.gametrends.remote.APIClient;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -95,59 +91,40 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
         isLoading = true;
         updateRefreshing();
 
-
-        final Response.Listener<String> response =
-                new Response.Listener<String>() {
-
-                    @Override
-                    public void onResponse(String response) {
-
-                        try {
-                            JSONArray itens = new JSONArray(response);
-                            ArrayList<String> newItens = new ArrayList<>();
-
-                            for(int i = 0; i < itens.length(); i++){
-                                newItens.add(itens.getJSONObject(i).toString());
-                            }
-
-                            mAdapter.addItens(newItens);
-                            isLoading = false;
-
-                            offset = offset + PAGE_SIZE;
-                            updateRefreshing();
+        final APIClient.ApiClientResponse<List<Game>> listener = new APIClient.ApiClientResponse<List<Game>>(){
 
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                };
+            @Override
+            public void onResponse(List<Game> games) {
 
-        final Response.ErrorListener responseErro =
-                new Response.ErrorListener() {
+                mAdapter.addItens(games);
+                isLoading = false;
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("ERRO", "ERRO REQUEST");
-                        error.printStackTrace();
-                        isLoading = false;
-                    }
-                };
+                offset = offset + PAGE_SIZE;
+                updateRefreshing();
+
+            }
+
+            @Override
+            public void onErro() {
+                Log.d("ERRO", "ERRO REQUEST");
+                isLoading = false;
+            }
+        };
+
 
         if(QueryTypeEnum.POPULAR.equals(mQueryType)){
 
-            APIClient.getPopularGamesRequest(mRequestQueue, response, responseErro, PAGE_SIZE, offset);
+            APIClient.getPopularGamesRequest(mRequestQueue, listener, PAGE_SIZE, offset);
 
         }else if(QueryTypeEnum.COMMING.equals(mQueryType)){
 
-            APIClient.getCommingGamesRequest(mRequestQueue, response, responseErro, PAGE_SIZE, offset);
+            APIClient.getCommingGamesRequest(mRequestQueue, listener, PAGE_SIZE, offset);
 
         }else if(QueryTypeEnum.FAVORITE.equals(mQueryType)){
 
-            APIClient.getPopularGamesRequest(mRequestQueue, response, responseErro, PAGE_SIZE, offset);
+            APIClient.getPopularGamesRequest(mRequestQueue, listener, PAGE_SIZE, offset);
         }
-
-
     }
 
     private OnFragmentInteractionListener mListener;
@@ -219,9 +196,9 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
         return rootView;
     }
 
-    public void onSelectGame(String jsonGame) {
+    public void onSelectGame(Game game) {
         if (mListener != null) {
-            mListener.onRequestOpenGameDetail(jsonGame);
+            mListener.onRequestOpenGameDetail(game);
         }
     }
 
@@ -243,8 +220,8 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
     }
 
     @Override
-    public void onCardClick(String jsonFilme) {
-        onSelectGame(jsonFilme);
+    public void onCardClick(Game game) {
+        onSelectGame(game);
     }
 
     /**
@@ -258,6 +235,6 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onRequestOpenGameDetail(String json);
+        void onRequestOpenGameDetail(Game game);
     }
 }

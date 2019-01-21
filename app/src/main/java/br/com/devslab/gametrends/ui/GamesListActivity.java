@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import br.com.devslab.gametrends.R;
+import br.com.devslab.gametrends.data.Game;
 
 
 public class GamesListActivity extends AppCompatActivity implements GamesFragment.OnFragmentInteractionListener {
@@ -31,7 +32,7 @@ public class GamesListActivity extends AppCompatActivity implements GamesFragmen
     }
 
     @Override
-    public void onRequestOpenGameDetail(String json) {
+    public void onRequestOpenGameDetail(Game game) {
         //Todo imlementar chamada para detalhe
         Log.i("TODO", "Implementar Detalhe");
     }

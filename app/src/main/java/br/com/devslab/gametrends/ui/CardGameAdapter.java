@@ -13,11 +13,10 @@ import android.widget.ImageView;
 import com.android.volley.RequestQueue;
 import com.bumptech.glide.Glide;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
+import java.util.List;
 
+import br.com.devslab.gametrends.data.Game;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -39,15 +38,15 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
     }
 
     public interface CardGameAdapterOnclickHandler {
-        void onCardClick(String jsonGame);
+        void onCardClick(Game game);
     }
 
-    private ArrayList<String> listaGames;
+    private List<Game> listaGames;
     private CardGameAdapterOnclickHandler mHandler;
     private Context mContext;
     private RequestQueue mRequestQueue;
 
-    public void addItens(ArrayList<String> moreItens) {
+    public void addItens(List<Game> moreItens) {
         listaGames.addAll(moreItens);
         notifyDataSetChanged();
     }
@@ -86,23 +85,19 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
 
         String idCover = "-1";
 
-            holder.mCard.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mHandler.onCardClick(listaGames.get(posicao));
-                }
-            });
+        holder.mCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mHandler.onCardClick(listaGames.get(posicao));
+            }
+        });
 
-        try {
-            JSONObject game = new JSONObject(listaGames.get(i));
-            idCover = game.getJSONObject("cover").getString("image_id");
+        Game game = listaGames.get(i);
+        idCover = game.getCoverId();
 
-            String urlImg = "https://images.igdb.com/igdb/image/upload/t_original/" + idCover + ".jpg";
-            Glide.with(mContext).clear(holder.cover);
-            Glide.with(mContext).load(urlImg).into(holder.cover);
+        String urlImg = "https://images.igdb.com/igdb/image/upload/t_original/" + idCover + ".jpg";
+        Glide.with(mContext).clear(holder.cover);
+        Glide.with(mContext).load(urlImg).into(holder.cover);
 
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 }
