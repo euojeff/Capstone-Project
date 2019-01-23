@@ -1,7 +1,16 @@
-package br.com.devslab.gametrends.data;
+package br.com.devslab.gametrends.database.entity;
 
+import android.arch.persistence.room.Embedded;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+
+import java.util.List;
+
+@Entity(tableName = "game")
 public class Game {
 
+    @PrimaryKey
     private Integer id;
     private String name;
     private String summary;
@@ -9,6 +18,30 @@ public class Game {
     private Integer rating;
     private String coverId;
     private Long releaseDate;
+
+    public Game(){};
+
+    @Ignore
+    private List<Artwork> artworksList;
+    @Ignore
+    private List<Screenshot> screenshotsList;
+
+
+    public List<Artwork> getArtworksList() {
+        return artworksList;
+    }
+
+    public void setArtworksList(List<Artwork> artworksList) {
+        this.artworksList = artworksList;
+    }
+
+    public List<Screenshot> getScreenshotsList() {
+        return screenshotsList;
+    }
+
+    public void setScreenshotsList(List<Screenshot> screenshotsList) {
+        this.screenshotsList = screenshotsList;
+    }
 
     public Long getReleaseDate() {
         return releaseDate;

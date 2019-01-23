@@ -16,7 +16,7 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.devslab.gametrends.data.Game;
+import br.com.devslab.gametrends.database.entity.Game;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 

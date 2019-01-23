@@ -18,7 +18,7 @@ import com.android.volley.toolbox.Volley;
 
 import java.util.List;
 
-import br.com.devslab.gametrends.data.Game;
+import br.com.devslab.gametrends.database.entity.Game;
 import br.com.devslab.gametrends.remote.APIClient;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -35,9 +35,19 @@ import butterknife.ButterKnife;
 public class GamesFragment extends Fragment implements CardGameAdapter.CardGameAdapterOnclickHandler {
 
     public enum QueryTypeEnum{
-        POPULAR,
-        COMMING,
-        FAVORITE
+        POPULAR(1),
+        COMING(2),
+        FAVORITE(3);
+
+        private Integer id;
+
+        QueryTypeEnum(Integer id){
+            this.id = id;
+        }
+
+        Integer getId(){
+            return id;
+        }
     };
 
     private static final String ARG_QUERY_TYPE = "ARG_QUERY_TYPE";
@@ -95,7 +105,7 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
 
 
             @Override
-            public void onResponse(List<Game> games) {
+            public void onResponse(List<Game> games, String originalJson) {
 
                 mAdapter.addItens(games);
                 isLoading = false;
@@ -109,6 +119,7 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
             public void onErro() {
                 Log.d("ERRO", "ERRO REQUEST");
                 isLoading = false;
+                updateRefreshing();
             }
         };
 
@@ -117,7 +128,7 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
 
             APIClient.getPopularGamesRequest(mRequestQueue, listener, PAGE_SIZE, offset);
 
-        }else if(QueryTypeEnum.COMMING.equals(mQueryType)){
+        }else if(QueryTypeEnum.COMING.equals(mQueryType)){
 
             APIClient.getCommingGamesRequest(mRequestQueue, listener, PAGE_SIZE, offset);
 

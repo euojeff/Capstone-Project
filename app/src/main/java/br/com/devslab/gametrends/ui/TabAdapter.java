@@ -17,7 +17,7 @@ public class TabAdapter extends FragmentPagerAdapter {
         super(fm);
     }
 
-    public void adicionar(Fragment fragment, String tabTitle){
+    public void addTab(Fragment fragment, String tabTitle){
         this.fragments.add(fragment);
         this.titles.add(tabTitle);
     }

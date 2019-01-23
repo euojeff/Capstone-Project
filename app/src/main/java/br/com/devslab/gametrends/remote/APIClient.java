@@ -1,7 +1,6 @@
 package br.com.devslab.gametrends.remote;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -9,32 +8,32 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import br.com.devslab.gametrends.BuildConfig;
-import br.com.devslab.gametrends.data.Game;
+import br.com.devslab.gametrends.database.entity.Game;
 import br.com.devslab.gametrends.util.JsonUtil;
 
 public class APIClient {
 
     public interface ApiClientResponse<T>{
 
-        public void onResponse(T parsedContent);
+        void onResponse(T parsedContent, String originalJson);
 
-        public void onErro();
+        void onErro();
 
     }
 
     private static final String IGDB_KEY = BuildConfig.IGDB_API_KEY;
-    private static final String IGDB_BASE_URL = "https://api-v3.igdb.com";
+    private static final String IGDB_BASE_URL = "https://api-v3.igdb.com/";
 
     private static String LIST_GAMES_URN = "games";
+
+    private static String QUERY_GAMES = IGDB_BASE_URL + LIST_GAMES_URN;
 
     public static Map<String, String> getRequestHeaders(){
         Map<String, String>  params = new HashMap<>();
@@ -55,7 +54,7 @@ public class APIClient {
 
                         try {
 
-                            listener.onResponse(JsonUtil.getGames(response));
+                            listener.onResponse(JsonUtil.getGames(response), response);
 
 
                         } catch (JSONException e) {
@@ -75,7 +74,7 @@ public class APIClient {
                 };
 
 
-        StringRequest request = new StringRequest(Request.Method.POST, "https://api-v3.igdb.com/games", response, responseErro){
+        StringRequest request = new StringRequest(Request.Method.POST, QUERY_GAMES, response, responseErro){
 
             @Override
             public Map<String, String> getHeaders() {
@@ -85,8 +84,8 @@ public class APIClient {
             @Override
             public byte[] getBody() {
                 String requestBody =
-                        "fields name, summary, cover.*, rating, screenshots, videos, rating, popularity, first_release_date;\n" +
-                                "where platforms = (48) & cover != null & screenshots != null;\n" +
+                        "fields name, summary, cover.*, screenshots.*, artworks.*, rating, rating, popularity, first_release_date;\n" +
+                                "where platforms = (48) & cover != null & screenshots != null & artworks != null & summary != null &  first_release_date != null;\n" +
                                 "sort popularity :desc;\n" +
                                 "limit " + limit + ";\n" +
                                 "offset " + offSet + ";";
@@ -114,7 +113,7 @@ public class APIClient {
 
                         try {
 
-                            listener.onResponse(JsonUtil.getGames(response));
+                            listener.onResponse(JsonUtil.getGames(response), response);
 
 
                         } catch (JSONException e) {
@@ -132,7 +131,7 @@ public class APIClient {
                     }
                 };
 
-        StringRequest request = new StringRequest(Request.Method.POST, "https://api-v3.igdb.com/games", response, responseErro){
+        StringRequest request = new StringRequest(Request.Method.POST, QUERY_GAMES, response, responseErro){
 
             @Override
             public Map<String, String> getHeaders() {
@@ -142,8 +141,8 @@ public class APIClient {
             @Override
             public byte[] getBody() {
                 String requestBody =
-                        "fields name, summary, cover.*, rating, screenshots, videos, rating, popularity, first_release_date;\n" +
-                                "where platforms = (48) & cover != null & screenshots != null & first_release_date > " + unixTimeNow + ";\n" +
+                        "fields name, summary, cover.*, screenshots.*, artworks.*, rating, first_release_date;\n" +
+                                "where platforms = (48) & cover != null & screenshots != null & artworks != null & summary != null & first_release_date != null & first_release_date > " + unixTimeNow + ";\n" +
                                 "sort first_release_date :asc;\n" +
                                 "limit " + limit + ";\n" +
                                 "offset " + offSet + ";";

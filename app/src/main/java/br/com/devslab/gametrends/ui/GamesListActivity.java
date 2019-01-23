@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import br.com.devslab.gametrends.R;
-import br.com.devslab.gametrends.data.Game;
+import br.com.devslab.gametrends.database.entity.Game;
 
 
 public class GamesListActivity extends AppCompatActivity implements GamesFragment.OnFragmentInteractionListener {
@@ -18,11 +18,10 @@ public class GamesListActivity extends AppCompatActivity implements GamesFragmen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_games_list);
 
-
         TabAdapter adapter = new TabAdapter( getSupportFragmentManager());
-        adapter.adicionar( GamesFragment.newInstance(GamesFragment.QueryTypeEnum.POPULAR) , "Popular");
-        adapter.adicionar( GamesFragment.newInstance(GamesFragment.QueryTypeEnum.COMMING), "Comming");
-        adapter.adicionar( GamesFragment.newInstance(GamesFragment.QueryTypeEnum.POPULAR), "Favorite");
+        adapter.addTab( GamesFragment.newInstance(GamesFragment.QueryTypeEnum.POPULAR) , getResources().getString(R.string.tab_popular));
+        adapter.addTab( GamesFragment.newInstance(GamesFragment.QueryTypeEnum.COMING), getResources().getString(R.string.tab_coming));
+        adapter.addTab( GamesFragment.newInstance(GamesFragment.QueryTypeEnum.POPULAR), getResources().getString(R.string.tab_favorite));
 
         ViewPager viewPager = findViewById(R.id.abas_view_pager);
         viewPager.setAdapter(adapter);
