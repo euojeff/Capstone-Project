@@ -1,8 +1,11 @@
 package br.com.devslab.gametrends.ui;
 
 import br.com.devslab.gametrends.R;
+
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,7 +21,9 @@ import com.android.volley.toolbox.Volley;
 
 import java.util.List;
 
+import br.com.devslab.gametrends.database.config.AppDatabase;
 import br.com.devslab.gametrends.database.entity.Game;
+import br.com.devslab.gametrends.database.entity.JsonCache;
 import br.com.devslab.gametrends.remote.APIClient;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,7 +50,7 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
             this.id = id;
         }
 
-        Integer getId(){
+        public Integer getId(){
             return id;
         }
     };
@@ -66,6 +71,8 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
     private Integer offset = 0;
 
     private boolean isLoading = true;
+
+    private String mJsonDataCache = "";
 
     RequestQueue mRequestQueue;
 
@@ -167,6 +174,18 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mQueryType = (QueryTypeEnum) getArguments().getSerializable(ARG_QUERY_TYPE);
+
+            if(!QueryTypeEnum.FAVORITE.equals(mQueryType)){
+                AppDatabase.getInstance(getContext()).jsonCacheDao().load(mQueryType.getId()).observe(this, new Observer<JsonCache>(){
+
+                    @Override
+                    public void onChanged(@Nullable JsonCache jsonCache) {
+                        if(jsonCache != null){
+                            mJsonDataCache = jsonCache.getContent();
+                        }
+                    }
+                });
+            }
         }
     }
 

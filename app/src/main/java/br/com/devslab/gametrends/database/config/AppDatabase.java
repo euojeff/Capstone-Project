@@ -1,12 +1,17 @@
 package br.com.devslab.gametrends.database.config;
 
+import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.util.concurrent.Executors;
+
 import br.com.devslab.gametrends.database.dao.GameDao;
+import br.com.devslab.gametrends.database.dao.JsonCacheDao;
 import br.com.devslab.gametrends.database.entity.Artwork;
 import br.com.devslab.gametrends.database.entity.Game;
 import br.com.devslab.gametrends.database.entity.JsonCache;
@@ -26,19 +31,40 @@ public abstract class AppDatabase extends RoomDatabase {
     private static final String DATABASE_NAME = "gametrends";
     private static AppDatabase sInstance;
 
-    public static AppDatabase getInstance(Context context) {
+    public static AppDatabase getInstance(final Context context) {
         if (sInstance == null) {
             synchronized (LOCK) {
                 Log.d(LOG_TAG, "Creating new database instance");
-                sInstance = Room.databaseBuilder(context.getApplicationContext(),
-                        AppDatabase.class, AppDatabase.DATABASE_NAME)
-                        .build();
+
+                RoomDatabase.Builder<AppDatabase> builder  = Room.databaseBuilder(context.getApplicationContext(),
+                        AppDatabase.class, AppDatabase.DATABASE_NAME);
+
+                builder.addCallback(prePopulateDB(context.getApplicationContext()));
+
+                sInstance = builder.build();
             }
         }
         Log.d(LOG_TAG, "Getting the database instance");
         return sInstance;
     }
 
+    private static Callback prePopulateDB(final Context context){
+       return new Callback() {
+            @Override
+            public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                super.onCreate(db);
+                Executors.newSingleThreadScheduledExecutor().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        getInstance(context).jsonCacheDao().insertAll(JsonCache.populateData());
+                    }
+                });
+            }
+        };
+    }
+
     public abstract GameDao gameDao();
+
+    public abstract JsonCacheDao jsonCacheDao();
 
 }

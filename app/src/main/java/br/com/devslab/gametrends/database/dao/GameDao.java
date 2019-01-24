@@ -17,4 +17,7 @@ public interface GameDao {
 
     @Insert
     void insertGame(Game game);
+
+    @Insert
+    void insertAll(Game... gameEntities);
 }
