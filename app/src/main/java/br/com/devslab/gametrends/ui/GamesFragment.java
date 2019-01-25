@@ -258,7 +258,7 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
                 @Override
                 protected Void doInBackground(JsonCache... cache) {
 
-                    mDb.jsonCacheDao().insertAll(cache);
+                    mDb.jsonCacheDao().updateAll(cache);
 
                     return null;
                 }

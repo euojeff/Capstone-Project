@@ -47,6 +47,6 @@ public class JsonCache {
         list.add(new JsonCache(GamesFragment.QueryTypeEnum.POPULAR.getId(), null));
         list.add(new JsonCache(GamesFragment.QueryTypeEnum.COMING.getId(), null));
 
-        return (JsonCache[])list.toArray();
+        return list.toArray(new JsonCache[list.size()]);
     }
 }
