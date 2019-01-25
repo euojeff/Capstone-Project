@@ -4,6 +4,7 @@ import br.com.devslab.gametrends.R;
 
 import android.arch.lifecycle.Observer;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,10 +15,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
 
 import java.util.List;
 
@@ -25,6 +29,7 @@ import br.com.devslab.gametrends.database.config.AppDatabase;
 import br.com.devslab.gametrends.database.entity.Game;
 import br.com.devslab.gametrends.database.entity.JsonCache;
 import br.com.devslab.gametrends.remote.APIClient;
+import br.com.devslab.gametrends.util.JsonUtil;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -72,11 +77,35 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
 
     private boolean isLoading = true;
 
-    private String mJsonDataCache = "";
+    private JsonCache mJsonCache = null;
 
     RequestQueue mRequestQueue;
 
     private QueryTypeEnum mQueryType;
+
+    private AppDatabase mDb;
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mQueryType = (QueryTypeEnum) getArguments().getSerializable(ARG_QUERY_TYPE);
+            mDb = AppDatabase.getInstance(getContext());
+
+            if(!QueryTypeEnum.FAVORITE.equals(mQueryType)){
+                mDb.jsonCacheDao().load(mQueryType.getId()).observe(this, new Observer<JsonCache>(){
+
+                    @Override
+                    public void onChanged(@Nullable JsonCache jsonCache) {
+                        if(jsonCache != null){
+                            mJsonCache = jsonCache;
+                        }
+                    }
+                });
+            }
+        }
+    }
 
     private RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
@@ -120,11 +149,25 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
                 offset = offset + PAGE_SIZE;
                 updateRefreshing();
 
+                updateCache(originalJson);
             }
 
             @Override
             public void onErro() {
                 Log.d("ERRO", "ERRO REQUEST");
+
+                if(mJsonCache != null
+                        && mJsonCache.getContent() != null){
+
+                    try {
+                        List<Game> games = JsonUtil.getGames(mJsonCache.getContent());
+                        mAdapter.addItens(games);
+                        Toast.makeText(getContext(), R.string.offline, Toast.LENGTH_SHORT).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
                 isLoading = false;
                 updateRefreshing();
             }
@@ -170,26 +213,6 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mQueryType = (QueryTypeEnum) getArguments().getSerializable(ARG_QUERY_TYPE);
-
-            if(!QueryTypeEnum.FAVORITE.equals(mQueryType)){
-                AppDatabase.getInstance(getContext()).jsonCacheDao().load(mQueryType.getId()).observe(this, new Observer<JsonCache>(){
-
-                    @Override
-                    public void onChanged(@Nullable JsonCache jsonCache) {
-                        if(jsonCache != null){
-                            mJsonDataCache = jsonCache.getContent();
-                        }
-                    }
-                });
-            }
-        }
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -224,6 +247,24 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
         queryGames();
 
         return rootView;
+    }
+
+    private void updateCache(String json){
+        if(mJsonCache != null){
+            mJsonCache.setContent(json);
+
+            new AsyncTask<JsonCache, Void, Void>(){
+
+                @Override
+                protected Void doInBackground(JsonCache... cache) {
+
+                    mDb.jsonCacheDao().insertAll(cache);
+
+                    return null;
+                }
+            }.execute(mJsonCache);
+
+        }
     }
 
     public void onSelectGame(Game game) {

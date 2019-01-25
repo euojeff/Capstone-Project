@@ -6,4 +6,5 @@
     <string name="tab_coming">COMING</string>
     <string name="tab_popular">POPULAR</string>
     <string name="tab_favorite">FAVORITE</string>
+    <string name="offline">OFFLINE</string>
 </resources>
