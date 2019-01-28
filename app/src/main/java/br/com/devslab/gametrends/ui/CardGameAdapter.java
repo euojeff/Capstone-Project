@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.bumptech.glide.Glide;
@@ -17,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.devslab.gametrends.database.entity.Game;
+import br.com.devslab.gametrends.remote.APIClient;
+import br.com.devslab.gametrends.util.Util;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -30,6 +33,11 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
         CardView mCard;
         @BindView(R.id.card_cover) @Nullable
         ImageView cover;
+        @BindView(R.id.tv_card_title) @Nullable
+        TextView title;
+
+        @BindView(R.id.tv_card_rating) @Nullable
+        TextView rating;
 
         public CardGameHolder(View itemView) {
             super(itemView);
@@ -94,8 +102,17 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
 
         Game game = listaGames.get(i);
         idCover = game.getCoverId();
+        holder.title.setText(game.getName());
 
-        String urlImg = "https://images.igdb.com/igdb/image/upload/t_original/" + idCover + ".jpg";
+        String rateLimit = " / " + mContext.getResources().getString(R.string.rating_limit);
+        String none = mContext.getResources().getString(R.string.none);
+        if(game.getRating() == null){
+            holder.rating.setText(none + rateLimit);
+        }else{
+            holder.rating.setText(game.getRating() + rateLimit);
+        }
+
+        String urlImg = APIClient.getImgUrl(idCover);
         Glide.with(mContext).clear(holder.cover);
         Glide.with(mContext).load(urlImg).into(holder.cover);
 

@@ -7,12 +7,14 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.io.Serializable;
+
 @Entity(tableName = "atwork",
         foreignKeys = @ForeignKey(entity = Game.class,
         parentColumns = "id",
         childColumns = "game_id",
         onDelete = ForeignKey.CASCADE))
-public class Artwork {
+public class Artwork implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     private Integer id;

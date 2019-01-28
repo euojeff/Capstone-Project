@@ -41,6 +41,10 @@ public class APIClient {
         return params;
     }
 
+    public static String getImgUrl(String apiIMGId){
+        return "https://images.igdb.com/igdb/image/upload/t_original/" + apiIMGId + ".jpg";
+    }
+
     public static void getPopularGamesRequest(@NonNull RequestQueue requestQueue,
                                               @NonNull final ApiClientResponse<List<Game>> listener,
                                               @NonNull final Integer limit,
@@ -84,9 +88,9 @@ public class APIClient {
             @Override
             public byte[] getBody() {
                 String requestBody =
-                        "fields name, summary, cover.*, screenshots.*, artworks.*, rating, rating, popularity, first_release_date;\n" +
-                                "where platforms = (48) & cover != null & screenshots != null & artworks != null & summary != null &  first_release_date != null;\n" +
-                                "sort popularity :desc;\n" +
+                        "fields name, summary, cover.*, screenshots.*, artworks.*, rating, popularity, first_release_date;\n" +
+                                "where rating != null & platforms = (48) & cover != null & screenshots != null & artworks != null & summary != null &  first_release_date != null;\n" +
+                                "sort rating :desc;\n" +
                                 "limit " + limit + ";\n" +
                                 "offset " + offSet + ";";
 

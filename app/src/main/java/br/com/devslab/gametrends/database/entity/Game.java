@@ -1,14 +1,15 @@
 package br.com.devslab.gametrends.database.entity;
 
-import android.arch.persistence.room.Embedded;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Entity(tableName = "game")
-public class Game {
+public class Game implements Serializable{
+
 
     @PrimaryKey
     private Integer id;

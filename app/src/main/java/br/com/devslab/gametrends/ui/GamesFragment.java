@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,6 +31,7 @@ import br.com.devslab.gametrends.database.entity.Game;
 import br.com.devslab.gametrends.database.entity.JsonCache;
 import br.com.devslab.gametrends.remote.APIClient;
 import br.com.devslab.gametrends.util.JsonUtil;
+import br.com.devslab.gametrends.util.Util;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -146,10 +148,12 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
                 mAdapter.addItens(games);
                 isLoading = false;
 
+                if(offset == 0){
+                    updateCache(originalJson);
+                }
+
                 offset = offset + PAGE_SIZE;
                 updateRefreshing();
-
-                updateCache(originalJson);
             }
 
             @Override
@@ -159,10 +163,12 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
                 if(mJsonCache != null
                         && mJsonCache.getContent() != null){
 
+                    offset = 0;
+
                     try {
                         List<Game> games = JsonUtil.getGames(mJsonCache.getContent());
                         mAdapter.addItens(games);
-                        Toast.makeText(getContext(), R.string.offline, Toast.LENGTH_SHORT).show();
+                        Util.showSnack(getView(), getContext().getResources().getString(R.string.offline));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

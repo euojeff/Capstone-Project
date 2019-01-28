@@ -1,10 +1,10 @@
 package br.com.devslab.gametrends.ui;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 
 import br.com.devslab.gametrends.R;
 import br.com.devslab.gametrends.database.entity.Game;
@@ -32,7 +32,9 @@ public class GamesListActivity extends AppCompatActivity implements GamesFragmen
 
     @Override
     public void onRequestOpenGameDetail(Game game) {
-        //Todo imlementar chamada para detalhe
-        Log.i("TODO", "Implementar Detalhe");
+        Intent intent = new Intent(this, GameDetailActivity.class);
+        intent.putExtra(GameDetailActivity.EXTRA_GAME, game);
+
+        startActivity(intent);
     }
 }

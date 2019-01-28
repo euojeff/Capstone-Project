@@ -6,12 +6,14 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
+import java.io.Serializable;
+
 @Entity(tableName = "screenshot",
         foreignKeys = @ForeignKey(entity = Game.class,
                 parentColumns = "id",
                 childColumns = "game_id",
                 onDelete = ForeignKey.CASCADE))
-public class Screenshot {
+public class Screenshot implements Serializable {
 
     @PrimaryKey
     private Integer id;

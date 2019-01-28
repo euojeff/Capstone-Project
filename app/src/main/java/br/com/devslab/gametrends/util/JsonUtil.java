@@ -86,6 +86,12 @@ public class JsonUtil {
             idCover = null;
         };
 
+        try {
+            game.setRating((int)jsonGame.getDouble("rating"));
+        }catch (JSONException e){
+            //Do nothing
+        };
+
         game.setId(jsonGame.getInt("id"));
         game.setName(jsonGame.getString("name"));
         game.setSummary(jsonGame.getString("summary"));
