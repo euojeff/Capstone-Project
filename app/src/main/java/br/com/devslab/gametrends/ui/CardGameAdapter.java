@@ -19,7 +19,6 @@ import java.util.List;
 
 import br.com.devslab.gametrends.database.entity.Game;
 import br.com.devslab.gametrends.remote.APIClient;
-import br.com.devslab.gametrends.util.Util;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -81,7 +80,7 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
     public CardGameAdapter.CardGameHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
 
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-        View view = inflater.inflate(R.layout.cartd_game, viewGroup, false);
+        View view = inflater.inflate(R.layout.card_game, viewGroup, false);
 
         return new CardGameAdapter.CardGameHolder(view);
     }
