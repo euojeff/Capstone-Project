@@ -50,11 +50,19 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
     RecyclerView mScreenshotsRecycler;
 
     @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ButterKnife.bind(this);
 
         mGame = (Game)getIntent().getSerializableExtra(EXTRA_GAME);
