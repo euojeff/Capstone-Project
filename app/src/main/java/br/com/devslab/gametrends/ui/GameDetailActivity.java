@@ -4,27 +4,35 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import br.com.devslab.gametrends.R;
 import br.com.devslab.gametrends.database.entity.Game;
+import br.com.devslab.gametrends.database.entity.Screenshot;
 import br.com.devslab.gametrends.remote.APIClient;
 import br.com.devslab.gametrends.util.Util;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class GameDetailActivity extends AppCompatActivity {
+public class GameDetailActivity extends AppCompatActivity implements CardScreenshotAdapter.CardScreenshotAdapterOnclickHandler {
 
     public static String EXTRA_GAME = "EXTRA_GAME";
 
     private Game mGame;
+    private List<Screenshot> mScreenshots;
+    private CardScreenshotAdapter mCardScreenshotAdapter;
 
     @BindView(R.id.img_parallax)
     ImageView mParallaxIV;
@@ -38,6 +46,8 @@ public class GameDetailActivity extends AppCompatActivity {
     TextView mRating;
     @BindView(R.id.sumary)
     TextView mSumary;
+    @BindView(R.id.recycler_screenshots)
+    RecyclerView mScreenshotsRecycler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +61,7 @@ public class GameDetailActivity extends AppCompatActivity {
         loadParallax(mGame);
         loadCover(mGame);
         populateData(mGame);
+        configScreenshots(mGame);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -60,6 +71,19 @@ public class GameDetailActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+    }
+
+    private void configScreenshots(Game game){
+
+        mScreenshots = new ArrayList<>();
+        mScreenshots.addAll(game.getScreenshotsList());
+        mCardScreenshotAdapter = new CardScreenshotAdapter(this, this);
+        mScreenshotsRecycler.setAdapter(mCardScreenshotAdapter);
+
+        LinearLayoutManager horizontalLayoutManagaer = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        mScreenshotsRecycler.setLayoutManager(horizontalLayoutManagaer);
+
+        mCardScreenshotAdapter.addItens(mScreenshots);
     }
 
     private void populateData(Game game){
@@ -87,6 +111,11 @@ public class GameDetailActivity extends AppCompatActivity {
 
         String urlImg = APIClient.getImgUrl(game.getCoverId());
         Util.loadImg(urlImg, mCoverIV);
+    }
 
+    @Override
+    public void onScreenshotClick(Screenshot screenshot) {
+        //Todo implement Fullscreen after Capstone
+        Log.d(GameDetailActivity.class.getName(), "Clicked Screenshot");
     }
 }

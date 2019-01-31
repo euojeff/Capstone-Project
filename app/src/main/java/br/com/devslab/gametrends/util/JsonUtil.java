@@ -80,13 +80,6 @@ public class JsonUtil {
         };
 
         try {
-            idCover = jsonGame.getJSONObject("cover").getString("image_id");
-        }catch (JSONException e){
-            //Sometime the api get an Integer in this. We will set null.
-            idCover = null;
-        };
-
-        try {
             game.setRating((int)jsonGame.getDouble("rating"));
         }catch (JSONException e){
             //Do nothing

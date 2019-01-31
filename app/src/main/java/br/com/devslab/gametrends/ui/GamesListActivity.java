@@ -26,7 +26,7 @@ public class GamesListActivity extends AppCompatActivity implements GamesFragmen
         ViewPager viewPager = findViewById(R.id.abas_view_pager);
         viewPager.setAdapter(adapter);
 
-        TabLayout tabLayout = findViewById(R.id.abas);
+        TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
     }
 
