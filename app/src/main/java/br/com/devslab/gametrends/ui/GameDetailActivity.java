@@ -1,8 +1,15 @@
 package br.com.devslab.gametrends.ui;
 
+import android.arch.lifecycle.Observer;
+import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,13 +19,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import br.com.devslab.gametrends.R;
+import br.com.devslab.gametrends.database.config.AppDatabase;
 import br.com.devslab.gametrends.database.entity.Game;
 import br.com.devslab.gametrends.database.entity.Screenshot;
 import br.com.devslab.gametrends.remote.APIClient;
@@ -33,6 +39,9 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
     private Game mGame;
     private List<Screenshot> mScreenshots;
     private CardScreenshotAdapter mCardScreenshotAdapter;
+    private AppDatabase mDb;
+    private boolean mFavorited = false;
+    private Context mContext;
 
     @BindView(R.id.img_parallax)
     ImageView mParallaxIV;
@@ -48,6 +57,8 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
     TextView mSumary;
     @BindView(R.id.recycler_screenshots)
     RecyclerView mScreenshotsRecycler;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -58,6 +69,7 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = this;
         setContentView(R.layout.activity_game_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
@@ -65,18 +77,53 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ButterKnife.bind(this);
 
+        mDb = AppDatabase.getInstance(this);
         mGame = (Game)getIntent().getSerializableExtra(EXTRA_GAME);
         loadParallax(mGame);
         loadCover(mGame);
         populateData(mGame);
         configScreenshots(mGame);
+        configFab();
+    }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+    private void configFab(){
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+            }
+        });
+
+        mDb.gameDao().loadFavorited(mGame.getId()).observe(this, new Observer<Game>() {
+            @Override
+            public void onChanged(@Nullable Game game) {
+                if(game != null){
+                    mFavorited = true;
+                    fab.setImageResource( R.drawable.ic_clear_white);
+                }else{
+                    mFavorited = false;
+                    fab.setImageResource(R.drawable.ic_add_white);
+                }
+            }
+        });
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                new AsyncTask<Void, Void, Void>(){
+
+                    @Override
+                    protected Void doInBackground(Void... voids) {
+                        if(mFavorited){
+                            mDb.gameDao().deleteAll(mGame);
+                        }else{
+                            mDb.gameDao().insertAll(mGame);
+                        }
+                        return null;
+                    }
+                }.execute();
             }
         });
     }
