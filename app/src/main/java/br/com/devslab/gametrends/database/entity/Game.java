@@ -19,30 +19,12 @@ public class Game implements Serializable{
     private Integer rating;
     private String coverId;
     private Long releaseDate;
-
-    public Game(){};
-
-    @Ignore
-    private List<Artwork> artworksList;
     @Ignore
     private List<Screenshot> screenshotsList;
+    @Ignore
+    private List<Artwork> artworksList;
 
-
-    public List<Artwork> getArtworksList() {
-        return artworksList;
-    }
-
-    public void setArtworksList(List<Artwork> artworksList) {
-        this.artworksList = artworksList;
-    }
-
-    public List<Screenshot> getScreenshotsList() {
-        return screenshotsList;
-    }
-
-    public void setScreenshotsList(List<Screenshot> screenshotsList) {
-        this.screenshotsList = screenshotsList;
-    }
+    public Game(){};
 
     public Long getReleaseDate() {
         return releaseDate;
@@ -98,6 +80,22 @@ public class Game implements Serializable{
 
     public Integer getId() {
         return id;
+    }
+
+    public List<Screenshot> getScreenshotsList() {
+        return screenshotsList;
+    }
+
+    public void setScreenshotsList(List<Screenshot> screenshotsList) {
+        this.screenshotsList = screenshotsList;
+    }
+
+    public List<Artwork> getArtworksList() {
+        return artworksList;
+    }
+
+    public void setArtworksList(List<Artwork> artworksList) {
+        this.artworksList = artworksList;
     }
 
 }

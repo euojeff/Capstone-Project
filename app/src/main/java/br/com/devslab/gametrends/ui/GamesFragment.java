@@ -24,10 +24,12 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.devslab.gametrends.database.config.AppDatabase;
 import br.com.devslab.gametrends.database.entity.Game;
+import br.com.devslab.gametrends.database.entity.GameRelation;
 import br.com.devslab.gametrends.database.entity.JsonCache;
 import br.com.devslab.gametrends.remote.APIClient;
 import br.com.devslab.gametrends.util.JsonUtil;
@@ -95,7 +97,7 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
             mQueryType = (QueryTypeEnum) getArguments().getSerializable(ARG_QUERY_TYPE);
             mDb = AppDatabase.getInstance(getContext());
 
-            if(!QueryTypeEnum.FAVORITE.equals(mQueryType)){
+            if(!isFavoriteTab()){
                 mDb.jsonCacheDao().load(mQueryType.getId()).observe(this, new Observer<JsonCache>(){
 
                     @Override
@@ -107,6 +109,18 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
                 });
             }
         }
+    }
+
+    private boolean isFavoriteTab(){
+        return QueryTypeEnum.FAVORITE.equals(mQueryType);
+    }
+
+    private boolean isPopularTab(){
+        return QueryTypeEnum.POPULAR.equals(mQueryType);
+    }
+
+    private boolean isComingTab(){
+        return QueryTypeEnum.COMING.equals(mQueryType);
     }
 
     private RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
@@ -180,17 +194,34 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
         };
 
 
-        if(QueryTypeEnum.POPULAR.equals(mQueryType)){
+        if(isPopularTab()){
 
             APIClient.getPopularGamesRequest(mRequestQueue, listener, PAGE_SIZE, offset);
 
-        }else if(QueryTypeEnum.COMING.equals(mQueryType)){
+        }else if(isComingTab()){
 
             APIClient.getCommingGamesRequest(mRequestQueue, listener, PAGE_SIZE, offset);
 
-        }else if(QueryTypeEnum.FAVORITE.equals(mQueryType)){
+        }else if(isFavoriteTab()){
 
-            APIClient.getPopularGamesRequest(mRequestQueue, listener, PAGE_SIZE, offset);
+            mDb.gameDao().loadFavorited().observe(this, new Observer<List<GameRelation>>() {
+                @Override
+                public void onChanged(@Nullable List<GameRelation> gamesRelations) {
+                    if(gamesRelations != null){
+                        List<Game> games = new ArrayList<>();
+                        for(GameRelation relation: gamesRelations){
+                            Game game = relation.game;
+                            game.setArtworksList(relation.artworkList);
+                            game.setScreenshotsList(relation.screenshotList);
+                            games.add(game);
+                        }
+                        mAdapter.clearGames();
+                        mAdapter.addItens(games);
+                        isLoading = false;
+                        updateRefreshing();
+                    }
+                }
+            });
         }
     }
 
@@ -209,7 +240,6 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
      * @param queryTypeEnum Parameter 1.
      * @return A new instance of fragment GamesFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static GamesFragment newInstance(QueryTypeEnum queryTypeEnum) {
         GamesFragment fragment = new GamesFragment();
         Bundle args = new Bundle();

@@ -2,14 +2,11 @@ package br.com.devslab.gametrends.ui;
 
 import android.arch.lifecycle.Observer;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +23,7 @@ import java.util.Random;
 import br.com.devslab.gametrends.R;
 import br.com.devslab.gametrends.database.config.AppDatabase;
 import br.com.devslab.gametrends.database.entity.Game;
+import br.com.devslab.gametrends.database.entity.GameRelation;
 import br.com.devslab.gametrends.database.entity.Screenshot;
 import br.com.devslab.gametrends.remote.APIClient;
 import br.com.devslab.gametrends.util.Util;
@@ -84,20 +82,10 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
         populateData(mGame);
         configScreenshots(mGame);
         configFab();
-    }
 
-    private void configFab(){
-        fab.setOnClickListener(new View.OnClickListener() {
+        mDb.gameDao().loadGame(mGame.getId()).observe(this, new Observer<GameRelation>() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
-        mDb.gameDao().loadFavorited(mGame.getId()).observe(this, new Observer<Game>() {
-            @Override
-            public void onChanged(@Nullable Game game) {
+            public void onChanged(@Nullable GameRelation game) {
                 if(game != null){
                     mFavorited = true;
                     fab.setImageResource( R.drawable.ic_clear_white);
@@ -107,7 +95,9 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
                 }
             }
         });
+    }
 
+    private void configFab(){
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -119,7 +109,7 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
                         if(mFavorited){
                             mDb.gameDao().deleteAll(mGame);
                         }else{
-                            mDb.gameDao().insertAll(mGame);
+                            mDb.gameDao().insertGameWithRelations(mGame);
                         }
                         return null;
                     }

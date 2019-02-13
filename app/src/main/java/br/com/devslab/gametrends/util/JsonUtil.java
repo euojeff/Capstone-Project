@@ -25,7 +25,7 @@ public class JsonUtil {
         return artwork;
     }
 
-    public static List<Artwork> getArtworks(JSONArray jsonArray) throws JSONException {
+    public static List<Artwork> getArtworks(JSONArray jsonArray) {
 
         List<Artwork> newItens = new ArrayList<>();
 

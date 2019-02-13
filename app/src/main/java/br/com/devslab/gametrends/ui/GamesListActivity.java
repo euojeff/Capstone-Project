@@ -21,7 +21,7 @@ public class GamesListActivity extends AppCompatActivity implements GamesFragmen
         TabAdapter adapter = new TabAdapter( getSupportFragmentManager());
         adapter.addTab( GamesFragment.newInstance(GamesFragment.QueryTypeEnum.POPULAR) , getResources().getString(R.string.tab_popular));
         adapter.addTab( GamesFragment.newInstance(GamesFragment.QueryTypeEnum.COMING), getResources().getString(R.string.tab_coming));
-        adapter.addTab( GamesFragment.newInstance(GamesFragment.QueryTypeEnum.POPULAR), getResources().getString(R.string.tab_favorite));
+        adapter.addTab( GamesFragment.newInstance(GamesFragment.QueryTypeEnum.FAVORITE), getResources().getString(R.string.tab_favorite));
 
         ViewPager viewPager = findViewById(R.id.abas_view_pager);
         viewPager.setAdapter(adapter);
