@@ -108,7 +108,45 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
                     }
                 });
             }
+            mAdapter = new CardGameAdapter(this, getContext(), mRequestQueue);
+            mRequestQueue = Volley.newRequestQueue(getContext());
         }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        final View rootView =  inflater.inflate(R.layout.fragment_games, container, false);
+
+        ButterKnife.bind(this, rootView);
+
+        mManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(mManager);
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.addOnScrollListener(recyclerViewOnScrollListener);
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+
+            @Override
+            public void onRefresh() {
+                mRequestQueue.cancelAll(new RequestQueue.RequestFilter() {
+                    @Override
+                    public boolean apply(Request<?> request) {
+                        return true;
+                    }
+                });
+                offset = 0;
+                mAdapter.clearGames();
+                queryGames();
+            }
+        });
+
+        if(offset == 0){
+            queryGames();
+        }
+
+        return rootView;
     }
 
     private boolean isFavoriteTab(){
@@ -248,42 +286,7 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
         return fragment;
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        final View rootView =  inflater.inflate(R.layout.fragment_games, container, false);
 
-        ButterKnife.bind(this, rootView);
-
-        mRequestQueue = Volley.newRequestQueue(getContext());
-        mAdapter = new CardGameAdapter(this, getContext(), mRequestQueue);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addOnScrollListener(recyclerViewOnScrollListener);
-        mManager = new LinearLayoutManager(getContext());
-
-        mRecyclerView.setLayoutManager(mManager);
-
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
-
-            @Override
-            public void onRefresh() {
-                mRequestQueue.cancelAll(new RequestQueue.RequestFilter() {
-                    @Override
-                    public boolean apply(Request<?> request) {
-                        return true;
-                    }
-                });
-                offset = 0;
-                mAdapter.clearGames();
-                queryGames();
-            }
-        });
-
-        queryGames();
-
-        return rootView;
-    }
 
     private void updateCache(String json){
         if(mJsonCache != null){
