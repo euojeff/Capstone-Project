@@ -7,10 +7,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import br.com.devslab.gametrends.database.entity.Artwork;
 import br.com.devslab.gametrends.database.entity.Game;
+import br.com.devslab.gametrends.database.entity.PulseArticle;
 import br.com.devslab.gametrends.database.entity.Screenshot;
 
 public class JsonUtil {
@@ -114,6 +119,78 @@ public class JsonUtil {
             Log.d("GAME INDEX", i + "");
         }
 
+
+        return newItens;
+    }
+
+    public static PulseArticle getPulseArticle(JSONObject json) {
+
+        PulseArticle article = new PulseArticle();
+
+        try{
+
+            String uid = json.getString("uid");
+            String imgUrl = json.getString("image");
+            String summary = json.getString("summary");
+            String articleUrl = json.getJSONObject("website").getString("url");
+            Long publishedAt = json.getLong("published_at");
+
+            article.setUniqueId(uid);
+            article.setImgUrl(imgUrl);
+            article.setSummary(summary);
+            article.setArticleUrl(articleUrl);
+            article.setPublishedDate(publishedAt);
+
+        }catch (JSONException e){
+            article = null;
+        }
+
+
+        return article;
+    }
+
+    public static List<PulseArticle> getPulseArticles(String json) throws JSONException {
+
+        JSONArray pulseGroups = new JSONArray(json);
+        ArrayList<PulseArticle> newItens = new ArrayList<>();
+
+        HashMap<String, JSONObject> distinctPulse = new HashMap<>();
+
+        for(int i = 0; i < pulseGroups.length(); i++){
+
+            JSONArray pulses = pulseGroups.getJSONObject(i).getJSONArray("pulses");
+
+            for(int j = 0; j < pulses.length(); j++){
+
+                try{
+                    JSONObject pulse = pulses.getJSONObject(j);
+                    String uid = pulse.getString("uid");
+
+                    if(!distinctPulse.containsKey(uid)){
+                        distinctPulse.put(uid, pulse);
+                    }
+                }catch (JSONException e){
+                    //Sometime the api gets an Integer in this. We will go forward... And exclude this element.
+                    continue;
+                };
+            }
+        }
+
+        for(Map.Entry<String, JSONObject> item: distinctPulse.entrySet()){
+
+            PulseArticle pulse = getPulseArticle(item.getValue());
+
+            if(pulse != null){
+                newItens.add(pulse);
+            }
+        }
+
+        Collections.sort(newItens, new Comparator<PulseArticle>() {
+            @Override
+            public int compare(PulseArticle o1, PulseArticle o2) {
+                return o1.getPublishedDate() > o2.getPublishedDate() ? 1 : -1;
+            }
+        });
 
         return newItens;
     }

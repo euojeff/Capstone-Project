@@ -16,6 +16,7 @@ import java.util.Map;
 
 import br.com.devslab.gametrends.BuildConfig;
 import br.com.devslab.gametrends.database.entity.Game;
+import br.com.devslab.gametrends.database.entity.PulseArticle;
 import br.com.devslab.gametrends.util.JsonUtil;
 
 public class APIClient {
@@ -32,8 +33,10 @@ public class APIClient {
     private static final String IGDB_BASE_URL = "https://api-v3.igdb.com/";
 
     private static String LIST_GAMES_URN = "games";
+    private static String LIST_PULSE_GROUPS_URN = "pulse_groups";
 
-    private static String QUERY_GAMES = IGDB_BASE_URL + LIST_GAMES_URN;
+    private static String QUERY_GAMES_URL = IGDB_BASE_URL + LIST_GAMES_URN;
+    private static String QUERY_PULSE_URL = IGDB_BASE_URL + LIST_PULSE_GROUPS_URN;
 
     public static Map<String, String> getRequestHeaders(){
         Map<String, String>  params = new HashMap<>();
@@ -73,12 +76,12 @@ public class APIClient {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                       listener.onErro();
+                        listener.onErro();
                     }
                 };
 
 
-        StringRequest request = new StringRequest(Request.Method.POST, QUERY_GAMES, response, responseErro){
+        StringRequest request = new StringRequest(Request.Method.POST, QUERY_GAMES_URL, response, responseErro){
 
             @Override
             public Map<String, String> getHeaders() {
@@ -93,6 +96,59 @@ public class APIClient {
                                 "sort rating :desc;\n" +
                                 "limit " + limit + ";\n" +
                                 "offset " + offSet + ";";
+
+                return requestBody.getBytes();
+            }
+        };
+
+        requestQueue.add(request);
+    }
+
+    public static void getGameArticlePulse(@NonNull RequestQueue requestQueue,
+                                              @NonNull final ApiClientResponse<List<PulseArticle>> listener,
+                                              @NonNull final Integer gameId){
+
+        final Response.Listener<String> response =
+                new Response.Listener<String>() {
+
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+
+                            listener.onResponse(JsonUtil.getPulseArticles(response), response);
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            listener.onErro();
+                        }
+                    }
+                };
+
+        final Response.ErrorListener responseErro =
+                new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                       listener.onErro();
+                    }
+                };
+
+
+        StringRequest request = new StringRequest(Request.Method.POST, QUERY_PULSE_URL, response, responseErro){
+
+            @Override
+            public Map<String, String> getHeaders() {
+                return APIClient.getRequestHeaders();
+            }
+
+            @Override
+            public byte[] getBody() {
+                String requestBody =
+                        "fields pulses.*, pulses.website.*;\n" +
+                                "where pulses.summary != null & pulses.image != null & pulses.website.url != null & game = " + gameId + ";\n" +
+                                "sort pulses.published_at :desc;";
 
                 return requestBody.getBytes();
             }
@@ -135,7 +191,7 @@ public class APIClient {
                     }
                 };
 
-        StringRequest request = new StringRequest(Request.Method.POST, QUERY_GAMES, response, responseErro){
+        StringRequest request = new StringRequest(Request.Method.POST, QUERY_GAMES_URL, response, responseErro){
 
             @Override
             public Map<String, String> getHeaders() {
@@ -150,16 +206,6 @@ public class APIClient {
                                 "sort first_release_date :asc;\n" +
                                 "limit " + limit + ";\n" +
                                 "offset " + offSet + ";";
-
-//                fields first_release_date, name, summary, storyline, cover.*, artworks.*, pulse_count, rating, screenshots.*, videos.*;
-//                exclude cover.alpha_channel, cover.animated, cover.height, cover.url, cover.width;
-//                exclude screenshots.alpha_channel, screenshots.animated, screenshots.height, screenshots.width, screenshots.url;
-//                exclude artworks.alpha_channel, artworks.animated, artworks.height, artworks.width, artworks.url;
-//                where cover != null & screenshots != null & artworks != null & platforms = (48) & first_release_date > 1538129354 & artworks.animated = false & artworks.alpha_channel = false &
-//                        cover.animated = false & cover.alpha_channel = false &
-//                        screenshots.alpha_channel = false & screenshots.animated = false;
-//                sort popularity desc;
-//                offset 40; limit 10;
 
                 return requestBody.getBytes();
             }

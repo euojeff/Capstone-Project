@@ -83,7 +83,7 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
 
     private JsonCache mJsonCache = null;
 
-    RequestQueue mRequestQueue;
+    private RequestQueue mRequestQueue;
 
     private QueryTypeEnum mQueryType;
 

@@ -23,6 +23,8 @@ public class Game implements Serializable{
     private List<Screenshot> screenshotsList;
     @Ignore
     private List<Artwork> artworksList;
+    @Ignore
+    private List<PulseArticle> pulseArticleList;
 
     public Game(){};
 
@@ -98,4 +100,11 @@ public class Game implements Serializable{
         this.artworksList = artworksList;
     }
 
+    public void setPulseArticleList(List<PulseArticle> pulseArticleList) {
+        this.pulseArticleList = pulseArticleList;
+    }
+
+    public List<PulseArticle> getPulseArticleList() {
+        return pulseArticleList;
+    }
 }
