@@ -70,5 +70,12 @@
             android:layout_height="wrap_content" android:orientation="horizontal"
             app:layout_constraintTop_toBottomOf="@id/sumary"/>
 
+        <android.support.v7.widget.RecyclerView
+            android:padding="16dp"
+            android:id="@+id/recycler_pulse_articles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@id/recycler_screenshots"/>
+
     </android.support.constraint.ConstraintLayout>
 </android.support.v4.widget.NestedScrollView>

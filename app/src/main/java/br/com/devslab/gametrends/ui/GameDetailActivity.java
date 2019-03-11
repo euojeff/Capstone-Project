@@ -37,13 +37,15 @@ import br.com.devslab.gametrends.util.Util;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class GameDetailActivity extends AppCompatActivity implements CardScreenshotAdapter.CardScreenshotAdapterOnclickHandler {
+public class GameDetailActivity extends AppCompatActivity implements CardScreenshotAdapter.CardScreenshotAdapterOnclickHandler, CardPulseAdapter.CardPulseAdapterOnclickHandler {
 
     public static String EXTRA_GAME = "EXTRA_GAME";
 
     private Game mGame;
     private List<Screenshot> mScreenshots;
+    private List<PulseArticle> mPulseArticles;
     private CardScreenshotAdapter mCardScreenshotAdapter;
+    private CardPulseAdapter mCardPulseAdapter;
     private AppDatabase mDb;
     private boolean mFavorited = false;
     private Context mContext;
@@ -63,6 +65,8 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
     TextView mSumary;
     @BindView(R.id.recycler_screenshots)
     RecyclerView mScreenshotsRecycler;
+    @BindView(R.id.recycler_pulse_articles)
+    RecyclerView mPulseRecycler;
     @BindView(R.id.fab)
     FloatingActionButton fab;
 
@@ -86,12 +90,16 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
 
         mDb = AppDatabase.getInstance(this);
         mGame = (Game)getIntent().getSerializableExtra(EXTRA_GAME);
+
+        configScreenshots(mGame);
+        configPulse();
+        configFab();
+
         loadParallax(mGame);
         loadCover(mGame);
         loadPulse(mGame);
         populateData(mGame);
-        configScreenshots(mGame);
-        configFab();
+
 
         mDb.gameDao().loadGame(mGame.getId()).observe(this, new Observer<GameRelation>() {
             @Override
@@ -119,6 +127,8 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
                     for(PulseArticle article : articles){
                         Log.d("Article", article.getSummary());
                     }
+                    mCardPulseAdapter.clearPulse();
+                    mCardPulseAdapter.addItens(articles);
                 }
             }
 
@@ -152,6 +162,15 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
                 }.execute();
             }
         });
+    }
+
+    private void configPulse(){
+
+        mCardPulseAdapter = new CardPulseAdapter(this, this);
+        mPulseRecycler.setAdapter(mCardPulseAdapter);
+
+        LinearLayoutManager horizontalLayoutManagaer = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        mPulseRecycler.setLayoutManager(horizontalLayoutManagaer);
     }
 
     private void configScreenshots(Game game){
@@ -198,5 +217,10 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
     public void onScreenshotClick(Screenshot screenshot) {
         //Todo implement Fullscreen after Capstone
         Log.d(GameDetailActivity.class.getName(), "Clicked Screenshot");
+    }
+
+    @Override
+    public void onPulseClick(PulseArticle screenshot) {
+        Log.d(GameDetailActivity.class.getName(), "Clicked Pulse");
     }
 }
