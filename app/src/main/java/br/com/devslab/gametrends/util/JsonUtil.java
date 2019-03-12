@@ -131,11 +131,13 @@ public class JsonUtil {
 
             String uid = json.getString("uid");
             String imgUrl = json.getString("image");
+            String title = json.getString("title");
             String summary = json.getString("summary");
             String articleUrl = json.getJSONObject("website").getString("url");
             Long publishedAt = json.getLong("published_at");
 
             article.setUniqueId(uid);
+            article.setTitle(title);
             article.setImgUrl(imgUrl);
             article.setSummary(summary);
             article.setArticleUrl(articleUrl);

@@ -8,8 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,10 +30,12 @@ import butterknife.ButterKnife;
 class CardPulseAdapter extends RecyclerView.Adapter <CardPulseAdapter.CardScreenshotHolder> {
 
     static class CardScreenshotHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.card_screenshot) @Nullable
+        @BindView(R.id.card_pulse) @Nullable
         CardView mCard;
         @BindView(R.id.card_img) @Nullable
         ImageView mImage;
+        @BindView(R.id.tv_card_title) @Nullable
+        TextView mTitle;
 
         public CardScreenshotHolder(View itemView) {
             super(itemView);
@@ -72,7 +77,7 @@ class CardPulseAdapter extends RecyclerView.Adapter <CardPulseAdapter.CardScreen
     public CardPulseAdapter.CardScreenshotHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
 
         LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-        View view = inflater.inflate(R.layout.card_screenshot, viewGroup, false);
+        View view = inflater.inflate(R.layout.card_pulse, viewGroup, false);
 
         return new CardPulseAdapter.CardScreenshotHolder(view);
     }
@@ -90,6 +95,8 @@ class CardPulseAdapter extends RecyclerView.Adapter <CardPulseAdapter.CardScreen
         });
 
         PulseArticle pulse = listPulses.get(i);
+
+        holder.mTitle.setText(pulse.getTitle());
 
         Glide.with(mContext).clear(holder.mImage);
         Glide.with(mContext).load(pulse.getImgUrl()).into(holder.mImage);

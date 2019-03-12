@@ -25,6 +25,8 @@ public class PulseArticle implements Serializable {
 
     private String imgUrl;
 
+    private String title;
+
     private String summary;
 
     private String articleUrl;
@@ -87,5 +89,13 @@ public class PulseArticle implements Serializable {
 
     public Long getPublishedDate() {
         return publishedDate;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getTitle() {
+        return title;
     }
 }
