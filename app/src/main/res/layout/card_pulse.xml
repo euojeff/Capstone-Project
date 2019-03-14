@@ -41,7 +41,38 @@
                     android:paddingStart="16dp"
                     android:paddingEnd="16dp"
                     android:scrollHorizontally="false"
+                    android:textAlignment="viewStart"
                     card_view:layout_constraintTop_toBottomOf="@id/guideline"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_card_author"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:paddingTop="16dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:scrollHorizontally="false"
+                    android:textAlignment="viewStart"
+                    card_view:layout_constraintStart_toStartOf="parent"
+                    card_view:layout_constraintEnd_toEndOf="parent"
+                    card_view:layout_constraintBottom_toTopOf="@id/tv_card_date"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_card_date"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="16dp"
+                    android:scrollHorizontally="false"
+                    android:textAlignment="viewStart"
+                    card_view:layout_constraintStart_toStartOf="parent"
+                    card_view:layout_constraintEnd_toEndOf="parent"
+                    card_view:layout_constraintBottom_toBottomOf="parent"
                     />
 
         </android.support.constraint.ConstraintLayout>

@@ -18,6 +18,7 @@ import br.com.devslab.gametrends.BuildConfig;
 import br.com.devslab.gametrends.database.entity.Game;
 import br.com.devslab.gametrends.database.entity.PulseArticle;
 import br.com.devslab.gametrends.util.JsonUtil;
+import br.com.devslab.gametrends.util.Util;
 
 public class APIClient {
 
@@ -163,7 +164,7 @@ public class APIClient {
                                               @NonNull final Integer limit,
                                               @NonNull final Integer offSet){
 
-        final long unixTimeNow = System.currentTimeMillis() / 1000L;
+        final long unixTimeNow = Util.timeMillisToUnixTime(System.currentTimeMillis());
 
         final Response.Listener<String> response =
                 new Response.Listener<String>() {
@@ -202,7 +203,7 @@ public class APIClient {
             public byte[] getBody() {
                 String requestBody =
                         "fields title, name, summary, cover.*, screenshots.*, artworks.*, rating, first_release_date;\n" +
-                                "where platforms = (48) & ticle != null & cover != null & screenshots != null & artworks != null & summary != null & first_release_date != null & first_release_date > " + unixTimeNow + ";\n" +
+                                "where platforms = (48) & & ticle != null & cover != null & screenshots != null & artworks != null & summary != null & first_release_date != null & first_release_date > " + unixTimeNow + ";\n" +
                                 "sort first_release_date :asc;\n" +
                                 "limit " + limit + ";\n" +
                                 "offset " + offSet + ";";

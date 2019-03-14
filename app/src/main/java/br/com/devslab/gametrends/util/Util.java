@@ -12,7 +12,11 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+
+import br.com.devslab.gametrends.R;
 
 public class Util {
 
@@ -32,6 +36,19 @@ public class Util {
         return condition;
     }
 
+    public static String dateToString(Date date, String pattern){
+        SimpleDateFormat formater = new SimpleDateFormat(pattern);
+        return formater.format(date);
+    }
+
+    public static Long timeMillisToUnixTime(Long time){
+        return time / 1000L;
+    }
+
+    public static Long unixTimeToTimeMilis(Long time){
+        return time * 1000L;
+    }
+
     public static void showSnack(View view, String msg){
 
         Snackbar snack = Snackbar.make(view, msg, Snackbar.LENGTH_SHORT);
@@ -49,5 +66,23 @@ public class Util {
 
     public static void loadImg(String from, ImageView imageView){
         Glide.with(imageView.getContext()).load(from).into(imageView);
+    }
+
+    public static String formatedRate(Integer rating, Context ctx){
+
+        StringBuilder formatedRate = new StringBuilder();
+        String rateLimit = " / " + ctx.getResources().getString(R.string.rating_limit);
+        String none = ctx.getResources().getString(R.string.none);
+        String ratingTx = ctx.getResources().getString(R.string.lb_rating);
+
+        formatedRate.append(ratingTx).append(" ");
+
+        if(rating == null){
+            formatedRate.append(none).append(rateLimit);
+        }else{
+            formatedRate.append(rating).append(rateLimit);
+        }
+
+        return formatedRate.toString();
     }
 }

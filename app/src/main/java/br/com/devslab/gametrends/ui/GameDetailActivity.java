@@ -190,7 +190,8 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
 
         mTitle.setText(game.getName());
         mReleaseDate.setText("November 14, 2018");
-        mRating.setText("Rating: 99/100");
+        mRating.setText(Util.formatedRate(game.getRating(), mContext));
+
         mSumary.setText(game.getSummary());
     }
 

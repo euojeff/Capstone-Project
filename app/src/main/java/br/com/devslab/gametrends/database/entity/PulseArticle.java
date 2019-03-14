@@ -4,6 +4,7 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 
@@ -12,7 +13,7 @@ import java.io.Serializable;
                 parentColumns = "id",
                 childColumns = "game_id",
                 onDelete = ForeignKey.CASCADE))
-public class PulseArticle implements Serializable {
+public class PulseArticle implements Serializable{
 
     @PrimaryKey(autoGenerate = true)
     private Integer id;
@@ -26,6 +27,8 @@ public class PulseArticle implements Serializable {
     private String imgUrl;
 
     private String title;
+
+    private String author;
 
     private String summary;
 
@@ -98,4 +101,14 @@ public class PulseArticle implements Serializable {
     public String getTitle() {
         return title;
     }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+
 }

@@ -19,6 +19,7 @@ import java.util.List;
 
 import br.com.devslab.gametrends.database.entity.Game;
 import br.com.devslab.gametrends.remote.APIClient;
+import br.com.devslab.gametrends.util.Util;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -102,18 +103,10 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
         Game game = listaGames.get(i);
         idCover = game.getCoverId();
         holder.title.setText(game.getName());
-
-        String rateLimit = " / " + mContext.getResources().getString(R.string.rating_limit);
-        String none = mContext.getResources().getString(R.string.none);
-        if(game.getRating() == null){
-            holder.rating.setText(none + rateLimit);
-        }else{
-            holder.rating.setText(game.getRating() + rateLimit);
-        }
+        holder.rating.setText(Util.formatedRate(game.getRating(), mContext));
 
         String urlImg = APIClient.getImgUrl(idCover);
         Glide.with(mContext).clear(holder.cover);
         Glide.with(mContext).load(urlImg).into(holder.cover);
-
     }
 }

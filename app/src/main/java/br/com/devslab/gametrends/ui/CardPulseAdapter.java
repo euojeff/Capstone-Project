@@ -15,12 +15,14 @@ import com.bumptech.glide.Glide;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import br.com.devslab.gametrends.R;
 import br.com.devslab.gametrends.database.entity.PulseArticle;
 import br.com.devslab.gametrends.database.entity.Screenshot;
 import br.com.devslab.gametrends.remote.APIClient;
+import br.com.devslab.gametrends.util.Util;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -36,6 +38,10 @@ class CardPulseAdapter extends RecyclerView.Adapter <CardPulseAdapter.CardScreen
         ImageView mImage;
         @BindView(R.id.tv_card_title) @Nullable
         TextView mTitle;
+        @BindView(R.id.tv_card_author) @Nullable
+        TextView mAuthor;
+        @BindView(R.id.tv_card_date) @Nullable
+        TextView mDate;
 
         public CardScreenshotHolder(View itemView) {
             super(itemView);
@@ -97,6 +103,11 @@ class CardPulseAdapter extends RecyclerView.Adapter <CardPulseAdapter.CardScreen
         PulseArticle pulse = listPulses.get(i);
 
         holder.mTitle.setText(pulse.getTitle());
+        holder.mAuthor.setText(pulse.getAuthor());
+        Date date = new Date(pulse.getPublishedDate());
+        String formatedDate = Util.dateToString(date, mContext.getResources().getString(R.string.date_format));
+        holder.mDate.setText(formatedDate);
+
 
         Glide.with(mContext).clear(holder.mImage);
         Glide.with(mContext).load(pulse.getImgUrl()).into(holder.mImage);

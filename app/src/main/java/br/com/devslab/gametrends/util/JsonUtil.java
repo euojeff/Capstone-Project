@@ -93,7 +93,7 @@ public class JsonUtil {
         game.setId(jsonGame.getInt("id"));
         game.setName(jsonGame.getString("name"));
         game.setSummary(jsonGame.getString("summary"));
-        game.setReleaseDate(jsonGame.getLong("first_release_date"));
+        game.setReleaseDate(Util.unixTimeToTimeMilis(jsonGame.getLong("first_release_date")));
         game.setCoverId(idCover);
         game.setArtworksList(getArtworks(jsonGame.getJSONArray("artworks")));
         game.setScreenshotsList(getScreenshots(jsonGame.getJSONArray("screenshots")));
@@ -132,12 +132,14 @@ public class JsonUtil {
             String uid = json.getString("uid");
             String imgUrl = json.getString("image");
             String title = json.getString("title");
+            String author = json.getString("author");
             String summary = json.getString("summary");
             String articleUrl = json.getJSONObject("website").getString("url");
-            Long publishedAt = json.getLong("published_at");
+            Long publishedAt = Util.unixTimeToTimeMilis(json.getLong("published_at"));
 
             article.setUniqueId(uid);
             article.setTitle(title);
+            article.setAuthor(author);
             article.setImgUrl(imgUrl);
             article.setSummary(summary);
             article.setArticleUrl(articleUrl);
@@ -190,7 +192,7 @@ public class JsonUtil {
         Collections.sort(newItens, new Comparator<PulseArticle>() {
             @Override
             public int compare(PulseArticle o1, PulseArticle o2) {
-                return o1.getPublishedDate() > o2.getPublishedDate() ? 1 : -1;
+                return o1.getPublishedDate() > o2.getPublishedDate() ? -1 : 1;
             }
         });
 

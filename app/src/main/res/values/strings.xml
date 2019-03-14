@@ -3,6 +3,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="date_format">MMM d, \'\'yy"</string>
     <string name="tab_coming">COMING</string>
     <string name="tab_popular">POPULAR</string>
     <string name="tab_favorite">FAVORITE</string>
@@ -10,6 +11,7 @@
     <string name="rating">Rating:</string>
     <string name="rating_limit">100</string>
     <string name="none">None</string>
+    <string name="lb_rating">Rating:</string>
     <string name="title_activity_game_detail">GameDetailActivity</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
