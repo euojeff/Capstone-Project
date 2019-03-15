@@ -15,8 +15,10 @@ import com.bumptech.glide.Glide;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import br.com.devslab.gametrends.R;
+import br.com.devslab.gametrends.database.entity.Game;
 
 public class Util {
 
@@ -36,8 +38,12 @@ public class Util {
         return condition;
     }
 
+    public static String formatedReleaseDate(Game game, Context ctx){
+        return Util.dateToString(new Date(game.getReleaseDate()), ctx.getResources().getString(R.string.date_format));
+    }
+
     public static String dateToString(Date date, String pattern){
-        SimpleDateFormat formater = new SimpleDateFormat(pattern);
+        SimpleDateFormat formater = new SimpleDateFormat(pattern, Locale.US);
         return formater.format(date);
     }
 
@@ -73,9 +79,6 @@ public class Util {
         StringBuilder formatedRate = new StringBuilder();
         String rateLimit = " / " + ctx.getResources().getString(R.string.rating_limit);
         String none = ctx.getResources().getString(R.string.none);
-        String ratingTx = ctx.getResources().getString(R.string.lb_rating);
-
-        formatedRate.append(ratingTx).append(" ");
 
         if(rating == null){
             formatedRate.append(none).append(rateLimit);

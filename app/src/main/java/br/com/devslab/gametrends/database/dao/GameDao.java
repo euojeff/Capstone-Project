@@ -14,6 +14,7 @@ import java.util.List;
 import br.com.devslab.gametrends.database.entity.Artwork;
 import br.com.devslab.gametrends.database.entity.Game;
 import br.com.devslab.gametrends.database.entity.GameRelation;
+import br.com.devslab.gametrends.database.entity.PulseArticle;
 import br.com.devslab.gametrends.database.entity.Screenshot;
 
 @Dao
@@ -24,6 +25,9 @@ public abstract class GameDao {
 
     @Transaction @Query("SELECT * FROM game where id = :id limit 1")
     public abstract LiveData<GameRelation> loadGame(Integer id);
+
+    @Query("SELECT * FROM pulse_article where uid = :uid limit 1")
+    public abstract PulseArticle loadPulse(String uid);
 
     @Transaction
     public void insertGameWithRelations(Game game){
@@ -49,9 +53,25 @@ public abstract class GameDao {
 
         insertArtworks(artworkList);
         insertScreenshots(screenshotList);
+        insertPulse(game.getPulseArticleList(), game);
     };
 
+    @Transaction
+    public void insertPulse(List<PulseArticle> pulses, Game game){
 
+        if(pulses != null){
+            for(PulseArticle pulse: pulses){
+                boolean alreadyStored = loadPulse(pulse.getUniqueId()) != null;
+                if(!alreadyStored){
+                    pulse.setGameId(game.getId());
+                    insertPulse(pulse);
+                }
+            }
+        }
+    };
+
+    @Insert
+    public abstract void insertPulse(PulseArticle pulse);
 
     @Insert
     public abstract void insertGames(List<Game> games);

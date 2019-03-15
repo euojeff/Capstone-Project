@@ -18,4 +18,8 @@ public class GameRelation{
     @Relation(parentColumn = "id",
             entityColumn = "game_id")
     public List<Screenshot> screenshotList;
+
+    @Relation(parentColumn = "id",
+            entityColumn = "game_id")
+    public List<PulseArticle> pulseArticleList;
 }

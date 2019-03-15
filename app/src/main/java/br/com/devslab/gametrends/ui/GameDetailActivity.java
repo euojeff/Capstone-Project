@@ -2,6 +2,8 @@ package br.com.devslab.gametrends.ui;
 
 import android.arch.lifecycle.Observer;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,6 +24,7 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -43,7 +46,6 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
 
     private Game mGame;
     private List<Screenshot> mScreenshots;
-    private List<PulseArticle> mPulseArticles;
     private CardScreenshotAdapter mCardScreenshotAdapter;
     private CardPulseAdapter mCardPulseAdapter;
     private AppDatabase mDb;
@@ -121,9 +123,23 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
 
 
             @Override
-            public void onResponse(List<PulseArticle> articles, String originalJson) {
+            public void onResponse(final List<PulseArticle> articles, String originalJson) {
 
                 if(articles != null){
+
+                    mGame.setPulseArticleList(articles);
+
+                    if(mFavorited){
+                        new AsyncTask<Void, Void, Void>(){
+
+                            @Override
+                            protected Void doInBackground(Void... voids) {
+                                    mDb.gameDao().insertPulse(articles, mGame);;
+                                return null;
+                            }
+                        }.execute();
+                    }
+
                     for(PulseArticle article : articles){
                         Log.d("Article", article.getSummary());
                     }
@@ -189,7 +205,7 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
     private void populateData(Game game){
 
         mTitle.setText(game.getName());
-        mReleaseDate.setText("November 14, 2018");
+        mReleaseDate.setText(Util.formatedReleaseDate(game, mContext));
         mRating.setText(Util.formatedRate(game.getRating(), mContext));
 
         mSumary.setText(game.getSummary());
@@ -221,7 +237,8 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
     }
 
     @Override
-    public void onPulseClick(PulseArticle screenshot) {
-        Log.d(GameDetailActivity.class.getName(), "Clicked Pulse");
+    public void onPulseClick(PulseArticle pulse) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(pulse.getArticleUrl()));
+        startActivity(browserIntent);
     }
 }

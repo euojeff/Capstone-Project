@@ -35,9 +35,10 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
         ImageView cover;
         @BindView(R.id.tv_card_title) @Nullable
         TextView title;
-
         @BindView(R.id.tv_card_rating) @Nullable
         TextView rating;
+        @BindView(R.id.tv_release_date) @Nullable
+        TextView releaseDate;
 
         public CardGameHolder(View itemView) {
             super(itemView);
@@ -91,7 +92,7 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
     public void onBindViewHolder(final CardGameAdapter.CardGameHolder holder, int i) {
         final int posicao = i;
 
-        String idCover = "-1";
+        String idCover;
 
         holder.mCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,6 +105,7 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
         idCover = game.getCoverId();
         holder.title.setText(game.getName());
         holder.rating.setText(Util.formatedRate(game.getRating(), mContext));
+        holder.releaseDate.setText(Util.formatedReleaseDate(game, mContext));
 
         String urlImg = APIClient.getImgUrl(idCover);
         Glide.with(mContext).clear(holder.cover);

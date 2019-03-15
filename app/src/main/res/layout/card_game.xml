@@ -41,6 +41,14 @@
             />
 
         <TextView
+            android:id="@+id/tv_release_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            card_view:layout_constraintStart_toEndOf="@id/guideline"
+            card_view:layout_constraintBottom_toTopOf="@id/lb_rating"/>
+
+        <TextView
             android:id="@+id/lb_rating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
