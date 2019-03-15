@@ -202,8 +202,8 @@ public class APIClient {
             @Override
             public byte[] getBody() {
                 String requestBody =
-                        "fields title, name, summary, cover.*, screenshots.*, artworks.*, rating, first_release_date;\n" +
-                                "where platforms = (48) & & ticle != null & cover != null & screenshots != null & artworks != null & summary != null & first_release_date != null & first_release_date > " + unixTimeNow + ";\n" +
+                        "fields name, summary, cover.*, screenshots.*, artworks.*, rating, first_release_date;\n" +
+                                "where platforms = (48) & cover != null & screenshots != null & artworks != null & summary != null & first_release_date != null & first_release_date > " + unixTimeNow + ";\n" +
                                 "sort first_release_date :asc;\n" +
                                 "limit " + limit + ";\n" +
                                 "offset " + offSet + ";";
