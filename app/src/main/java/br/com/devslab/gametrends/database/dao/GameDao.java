@@ -23,6 +23,9 @@ public abstract class GameDao {
     @Transaction @Query("SELECT * FROM game ORDER BY releaseDate desc")
     public abstract LiveData<List<GameRelation>> loadFavorited();
 
+    @Query("SELECT * FROM pulse_article")
+    public abstract List<PulseArticle> testSelectPulse();
+
     @Transaction @Query("SELECT * FROM game where id = :id limit 1")
     public abstract LiveData<GameRelation> loadGame(Integer id);
 
