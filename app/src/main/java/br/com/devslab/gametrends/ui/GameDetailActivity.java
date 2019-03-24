@@ -37,6 +37,7 @@ import br.com.devslab.gametrends.database.entity.Screenshot;
 import br.com.devslab.gametrends.remote.APIClient;
 import br.com.devslab.gametrends.util.JsonUtil;
 import br.com.devslab.gametrends.util.Util;
+import br.com.devslab.gametrends.widget.WidgetService;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -134,7 +135,7 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
 
                             @Override
                             protected Void doInBackground(Void... voids) {
-                                    mDb.gameDao().insertPulse(articles, mGame);;
+                                mDb.gameDao().insertPulse(articles, mGame);;
                                 return null;
                             }
                         }.execute();
@@ -173,6 +174,7 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
                         }else{
                             mDb.gameDao().insertGameWithRelations(mGame);
                         }
+                        WidgetService.startActionUpdateWidget(mContext);
                         return null;
                     }
                 }.execute();

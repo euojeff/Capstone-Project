@@ -1,4 +1,4 @@
-package br.com.devslab.gametrends;
+package br.com.devslab.gametrends.widget;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.widget.RemoteViews;
 
+import br.com.devslab.gametrends.R;
+
 /**
  * Implementation of App Widget functionality.
  */
@@ -15,8 +17,7 @@ public class PulseAppWidget extends AppWidgetProvider {
 
     public static String EXTRAS_PULSE_ARTICLE_URL = "EXTRA_PULSE_ARTICLE_URL";
 
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-                                int appWidgetId) {
+    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
 
         RemoteViews rv = new RemoteViews(context.getPackageName(), R.layout.pulse_app_widget);
 
@@ -26,6 +27,12 @@ public class PulseAppWidget extends AppWidgetProvider {
         configureClickBroadcast(context, rv, appWidgetId);
 
         appWidgetManager.updateAppWidget(appWidgetId, rv);
+    }
+
+    static void updateAppWidgets(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        for (int appWidgetId : appWidgetIds) {
+            updateAppWidget(context, appWidgetManager, appWidgetId);
+        }
     }
 
     private static void configureClickBroadcast(Context ctx, RemoteViews rv, int appWidgetId){

@@ -1,4 +1,4 @@
-package br.com.devslab.gametrends;
+package br.com.devslab.gametrends.widget;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,8 +15,10 @@ import com.bumptech.glide.request.RequestOptions;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import br.com.devslab.gametrends.R;
 import br.com.devslab.gametrends.database.config.AppDatabase;
 import br.com.devslab.gametrends.database.entity.PulseArticle;
+import br.com.devslab.gametrends.widget.PulseAppWidget;
 
 
 // Based: https://www.sitepoint.com/killer-way-to-show-a-list-of-items-in-android-collection-widget/
@@ -39,7 +41,7 @@ public class PulseAppWidgetRemoteViewsFactory implements RemoteViewsService.Remo
 
     @Override
     public void onDataSetChanged() {
-        mArticles =  mDb.gameDao().testSelectPulse();
+        mArticles =  mDb.gameDao().latestArticles();
     }
 
     @Override
