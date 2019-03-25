@@ -13,6 +13,7 @@ import com.firebase.jobdispatcher.Job;
 import com.firebase.jobdispatcher.Lifetime;
 import com.firebase.jobdispatcher.RetryStrategy;
 import com.firebase.jobdispatcher.Trigger;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import br.com.devslab.gametrends.R;
 import br.com.devslab.gametrends.database.entity.Game;
@@ -20,6 +21,8 @@ import br.com.devslab.gametrends.remote.SyncDataJobService;
 
 
 public class GamesListActivity extends AppCompatActivity implements GamesFragment.OnFragmentInteractionListener {
+
+    private FirebaseAnalytics mFirebaseAnalytics;;
 
 
     @Override
@@ -39,6 +42,7 @@ public class GamesListActivity extends AppCompatActivity implements GamesFragmen
         tabLayout.setupWithViewPager(viewPager);
 
         configureSyncDataJob();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
     }
 
     private void configureSyncDataJob(){

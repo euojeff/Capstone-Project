@@ -47,4 +47,9 @@ dependencies {
     annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
 
     implementation 'com.firebase:firebase-jobdispatcher:0.8.6'
+
+    //Analytics
+    implementation 'com.google.firebase:firebase-core:16.0.1'
 }
+
+apply plugin: 'com.google.gms.google-services'

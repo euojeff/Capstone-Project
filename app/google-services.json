@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "473838113318",
+    "firebase_url": "https://gametrends-690e8.firebaseio.com",
+    "project_id": "gametrends-690e8",
+    "storage_bucket": "gametrends-690e8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:473838113318:android:08ebdd6eaf933838",
+        "android_client_info": {
+          "package_name": "br.com.devslab.gametrends"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "473838113318-scft3h67v48r69maqelv6mi7tteg976o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAe8_3yxw-VLf09sVwrXf5TlyRbKYJZYho"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
