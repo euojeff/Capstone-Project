@@ -5,6 +5,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.firebase.jobdispatcher.Constraint;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
@@ -13,6 +14,10 @@ import com.firebase.jobdispatcher.Job;
 import com.firebase.jobdispatcher.Lifetime;
 import com.firebase.jobdispatcher.RetryStrategy;
 import com.firebase.jobdispatcher.Trigger;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import br.com.devslab.gametrends.R;
@@ -22,13 +27,16 @@ import br.com.devslab.gametrends.remote.SyncDataJobService;
 
 public class GamesListActivity extends AppCompatActivity implements GamesFragment.OnFragmentInteractionListener {
 
-    private FirebaseAnalytics mFirebaseAnalytics;;
+    private FirebaseAnalytics mFirebaseAnalytics;
+    private InterstitialAd mInterstitialAd;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_games_list);
+
+        configInterstitialAd();
 
         TabAdapter adapter = new TabAdapter( getSupportFragmentManager());
         adapter.addTab( GamesFragment.newInstance(GamesFragment.QueryTypeEnum.POPULAR) , getResources().getString(R.string.tab_popular));
@@ -61,8 +69,28 @@ public class GamesListActivity extends AppCompatActivity implements GamesFragmen
         dispatcher.mustSchedule(job);
     }
 
+    private void configInterstitialAd(){
+        MobileAds.initialize(this, getResources().getString(R.string.ADMOB_ID));
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getResources().getString(R.string.ADMOB_INTERSTITIAL_ID));
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                // Load the next interstitial.
+                mInterstitialAd.loadAd(new AdRequest.Builder().build());
+            }
+
+        });
+    }
+
     @Override
     public void onRequestOpenGameDetail(Game game) {
+
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        }
+
         Intent intent = new Intent(this, GameDetailActivity.class);
         intent.putExtra(GameDetailActivity.EXTRA_GAME, game);
 

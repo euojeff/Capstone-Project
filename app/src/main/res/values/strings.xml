@@ -12,6 +12,8 @@
     <string name="rating_limit">100</string>
     <string name="none">None</string>
     <string name="title_activity_game_detail">GameDetailActivity</string>
+    <string name="ADMOB_ID">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="ADMOB_INTERSTITIAL_ID">ca-app-pub-3940256099942544/1033173712</string>
     <string name="large_text">
         "Material is the metaphor.\n\n"
 
