@@ -6,8 +6,17 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.firebase.jobdispatcher.Constraint;
+import com.firebase.jobdispatcher.FirebaseJobDispatcher;
+import com.firebase.jobdispatcher.GooglePlayDriver;
+import com.firebase.jobdispatcher.Job;
+import com.firebase.jobdispatcher.Lifetime;
+import com.firebase.jobdispatcher.RetryStrategy;
+import com.firebase.jobdispatcher.Trigger;
+
 import br.com.devslab.gametrends.R;
 import br.com.devslab.gametrends.database.entity.Game;
+import br.com.devslab.gametrends.remote.SyncDataJobService;
 
 
 public class GamesListActivity extends AppCompatActivity implements GamesFragment.OnFragmentInteractionListener {
@@ -28,6 +37,24 @@ public class GamesListActivity extends AppCompatActivity implements GamesFragmen
 
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+        configureSyncDataJob();
+    }
+
+    private void configureSyncDataJob(){
+        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
+        Job job = dispatcher.newJobBuilder()
+                .setService(SyncDataJobService.class)
+                .setTag("SyncDataJob")
+                .setRecurring(true)
+                .setLifetime(Lifetime.FOREVER)
+                .setTrigger(Trigger.executionWindow(2, 10))
+                .setReplaceCurrent(false)
+                .setRetryStrategy(RetryStrategy.DEFAULT_EXPONENTIAL)
+                .setConstraints(Constraint.ON_UNMETERED_NETWORK, Constraint.DEVICE_CHARGING)
+                .build();
+
+        dispatcher.mustSchedule(job);
     }
 
     @Override

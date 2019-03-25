@@ -12,9 +12,6 @@ import br.com.devslab.gametrends.database.entity.JsonCache;
 public interface JsonCacheDao {
 
     @Insert
-    void insertJsonCache(JsonCache jsonCache);
-
-    @Insert
     void insertAll(JsonCache... jsonCaches);
 
     @Update

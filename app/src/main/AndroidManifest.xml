@@ -36,6 +36,11 @@
         <service android:name=".widget.PulseAppWidgetRemoteViewsService"
             android:permission="android.permission.BIND_REMOTEVIEWS"></service>
         <service android:name=".widget.WidgetService" />
+        <service android:name=".remote.SyncDataJobService" android:exported="false">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
+            </intent-filter>
+        </service>
     </application>
     
 

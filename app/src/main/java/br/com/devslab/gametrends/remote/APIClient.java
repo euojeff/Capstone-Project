@@ -27,7 +27,6 @@ public class APIClient {
         void onResponse(T parsedContent, String originalJson);
 
         void onErro();
-
     }
 
     private static final String IGDB_KEY = BuildConfig.IGDB_API_KEY;
