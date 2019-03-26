@@ -80,7 +80,6 @@ public class GamesListActivity extends AppCompatActivity implements GamesFragmen
                 // Load the next interstitial.
                 mInterstitialAd.loadAd(new AdRequest.Builder().build());
             }
-
         });
     }
 

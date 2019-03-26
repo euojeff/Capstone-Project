@@ -24,6 +24,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "com.android.support:appcompat-v7:$androidSupportVersion"
+    implementation "com.android.support:customtabs:$androidSupportVersion"
     implementation "com.android.support:recyclerview-v7:$androidSupportVersion"
     implementation "com.android.support:cardview-v7:$androidSupportVersion"
     implementation "com.android.support:design:$androidSupportVersion"
@@ -56,4 +57,13 @@ dependencies {
 }
 
 
-//apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services'
+
+//ref: https://github.com/invertase/react-native-firebase/issues/1155#issuecomment-452602368
+// THE FOLLOWING CODE IS NEEDED TO GET FIREBASE ANDROID SDK WORKING
+configurations.all {
+    resolutionStrategy {
+        force "com.android.support:support-v4:$androidSupportVersion"
+    }
+}
+com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true
