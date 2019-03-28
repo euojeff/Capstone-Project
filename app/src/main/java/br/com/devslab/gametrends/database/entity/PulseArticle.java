@@ -4,7 +4,6 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
 
 import java.io.Serializable;
 
@@ -36,7 +35,7 @@ public class PulseArticle implements Serializable{
 
     private Long publishedDate;
 
-    public PulseArticle(){};
+    public PulseArticle(){}
 
     public void setId(Integer id) {
         this.id = id;

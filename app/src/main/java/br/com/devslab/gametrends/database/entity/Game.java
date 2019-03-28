@@ -26,7 +26,7 @@ public class Game implements Serializable{
     @Ignore
     private List<PulseArticle> pulseArticleList;
 
-    public Game(){};
+    public Game(){}
 
     public Long getReleaseDate() {
         return releaseDate;

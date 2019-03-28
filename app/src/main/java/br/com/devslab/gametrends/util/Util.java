@@ -1,10 +1,8 @@
 package br.com.devslab.gametrends.util;
 
 import android.content.Context;
-import android.media.Image;
 import android.os.Build;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;

@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,14 +19,8 @@ import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
-import com.google.android.gms.ads.MobileAds;
-
-import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -38,7 +31,6 @@ import br.com.devslab.gametrends.database.entity.GameRelation;
 import br.com.devslab.gametrends.database.entity.PulseArticle;
 import br.com.devslab.gametrends.database.entity.Screenshot;
 import br.com.devslab.gametrends.remote.APIClient;
-import br.com.devslab.gametrends.util.JsonUtil;
 import br.com.devslab.gametrends.util.Util;
 import br.com.devslab.gametrends.widget.WidgetService;
 import butterknife.BindView;
@@ -87,7 +79,7 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
         super.onCreate(savedInstanceState);
         mContext = this;
         setContentView(R.layout.activity_game_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -138,7 +130,7 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
 
                             @Override
                             protected Void doInBackground(Void... voids) {
-                                mDb.gameDao().insertPulse(articles, mGame);;
+                                mDb.gameDao().insertPulse(articles, mGame);
                                 return null;
                             }
                         }.execute();

@@ -85,9 +85,7 @@ public class PulseAppWidgetRemoteViewsFactory implements RemoteViewsService.Remo
                     .get();
 
             rv.setImageViewBitmap(R.id.pulse_thumbs_iv, bitmap);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
 

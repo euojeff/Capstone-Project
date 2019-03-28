@@ -5,7 +5,6 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import br.com.devslab.gametrends.ui.GamesFragment;
@@ -18,12 +17,12 @@ public class JsonCache {
     private String content;
 
     @Ignore
-    public JsonCache(){};
+    public JsonCache(){}
 
     public JsonCache(Integer queryType, String content){
         this.queryType = queryType;
         this.content = content;
-    };
+    }
 
     public void setQueryType(Integer queryType) {
         this.queryType = queryType;

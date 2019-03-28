@@ -12,16 +12,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import br.com.devslab.gametrends.R;
 import br.com.devslab.gametrends.database.entity.PulseArticle;
-import br.com.devslab.gametrends.database.entity.Screenshot;
-import br.com.devslab.gametrends.remote.APIClient;
 import br.com.devslab.gametrends.util.Util;
 import butterknife.BindView;
 import butterknife.ButterKnife;

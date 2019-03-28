@@ -82,13 +82,13 @@ public class JsonUtil {
         }catch (JSONException e){
             //Sometime the api get an Integer in this. We will set null.
             idCover = null;
-        };
+        }
 
         try {
             game.setRating((int)jsonGame.getDouble("rating"));
         }catch (JSONException e){
             //Do nothing
-        };
+        }
 
         game.setId(jsonGame.getInt("id"));
         game.setName(jsonGame.getString("name"));
@@ -176,7 +176,7 @@ public class JsonUtil {
                 }catch (JSONException e){
                     //Sometime the api gets an Integer in this. We will go forward... And exclude this element.
                     continue;
-                };
+                }
             }
         }
 

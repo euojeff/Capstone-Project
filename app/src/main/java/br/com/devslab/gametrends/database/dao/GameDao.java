@@ -8,7 +8,7 @@ import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Transaction;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import br.com.devslab.gametrends.database.entity.Artwork;
@@ -35,7 +35,7 @@ public abstract class GameDao {
     @Transaction
     public void insertGameWithRelations(Game game){
 
-        insertGames(Arrays.asList(game));
+        insertGames(Collections.singletonList(game));
 
         List<Artwork> artworkList = new ArrayList<>();
         List<Screenshot> screenshotList = new ArrayList<>();
@@ -57,7 +57,7 @@ public abstract class GameDao {
         insertArtworks(artworkList);
         insertScreenshots(screenshotList);
         insertPulse(game.getPulseArticleList(), game);
-    };
+    }
 
     @Transaction
     public void insertPulse(List<PulseArticle> pulses, Game game){
@@ -71,7 +71,7 @@ public abstract class GameDao {
                 }
             }
         }
-    };
+    }
 
     @Insert
     public abstract void insertPulse(PulseArticle pulse);
