@@ -21,7 +21,7 @@
                     card_view:layout_constraintEnd_toEndOf="parent"
                     card_view:layout_constraintTop_toTopOf="parent"
                     card_view:layout_constraintBottom_toTopOf="@id/guideline"
-                    />
+                    android:contentDescription="@string/content_description_picture_of_the_post" />
 
 
                 <android.support.constraint.Guideline

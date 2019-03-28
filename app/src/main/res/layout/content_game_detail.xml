@@ -20,7 +20,8 @@
             android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_margin="@dimen/cover_margin"/>
+            android:layout_margin="@dimen/cover_margin"
+            android:contentDescription="@string/content_description_game_cover" />
 
         <TextView
             android:id="@+id/title"
