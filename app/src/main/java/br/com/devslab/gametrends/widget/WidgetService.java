@@ -5,6 +5,7 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 
 import br.com.devslab.gametrends.R;
 
@@ -37,7 +38,7 @@ public class WidgetService extends IntentService{
     public static void startActionUpdateWidget(Context context) {
         Intent intent = new Intent(context, WidgetService.class);
         intent.setAction(ACTION_UPDATE_WIDGET);
-        context.startService(intent);
+        ContextCompat.startForegroundService(context, intent);
     }
 
 }
