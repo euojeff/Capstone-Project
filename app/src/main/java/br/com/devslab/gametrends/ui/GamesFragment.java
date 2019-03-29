@@ -6,6 +6,7 @@ import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -22,6 +23,7 @@ import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,6 +65,9 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
     }
 
     private static final String ARG_QUERY_TYPE = "ARG_QUERY_TYPE";
+    private static final String SAVED_STATE_ITENS = "SAVED_STATE_ITENS";
+    private static final String SAVED_STATE_OFFSET = "SAVED_STATE_OFFSET";
+    private static final String SAVED_STATE_RV_MANAGER = "SAVED_STATE_RV_MANAGER";
 
 
     @BindView(R.id.recycler_games)
@@ -75,7 +80,7 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
     private LinearLayoutManager mManager;
 
     private static final Integer PAGE_SIZE = 50;
-    private Integer offset = 0;
+    private Integer mOffset = 0;
 
     private boolean isLoading = true;
 
@@ -91,6 +96,9 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        recoverySavedStateItens(savedInstanceState);
+
         if (getArguments() != null) {
             mQueryType = (QueryTypeEnum) getArguments().getSerializable(ARG_QUERY_TYPE);
             mDb = AppDatabase.getInstance(getContext());
@@ -134,17 +142,42 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
                         return true;
                     }
                 });
-                offset = 0;
+                mOffset = 0;
                 mAdapter.clearGames();
                 queryGames();
             }
         });
 
-        if(offset == 0){
+        recoverySavedStateItens(savedInstanceState);
+
+        if(mOffset == 0){
             queryGames();
         }
 
         return rootView;
+    }
+
+    private void recoverySavedStateItens(Bundle savedInstanceState){
+        if(savedInstanceState != null){
+            mOffset = savedInstanceState.getInt(SAVED_STATE_OFFSET);
+            List<Game> games = (List<Game>) savedInstanceState.getSerializable(SAVED_STATE_ITENS);
+            if(mRecyclerView != null) {
+                mAdapter.addItens(games);
+                mRecyclerView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(SAVED_STATE_RV_MANAGER));
+            }
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(SAVED_STATE_OFFSET, mOffset);
+        outState.putSerializable(SAVED_STATE_ITENS, (Serializable) mAdapter.getGameList());
+        if(mRecyclerView != null
+                && mRecyclerView.getLayoutManager() != null){
+            outState.putParcelable(SAVED_STATE_RV_MANAGER, mRecyclerView.getLayoutManager().onSaveInstanceState());
+        }
     }
 
     private boolean isFavoriteTab(){
@@ -198,11 +231,11 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
                 mAdapter.addItens(games);
                 isLoading = false;
 
-                if(offset == 0){
+                if(mOffset == 0){
                     updateCache(originalJson);
                 }
 
-                offset = offset + PAGE_SIZE;
+                mOffset = mOffset + PAGE_SIZE;
                 updateRefreshing();
             }
 
@@ -213,7 +246,7 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
                 if(mJsonCache != null
                         && mJsonCache.getContent() != null){
 
-                    offset = 0;
+                    mOffset = 0;
 
                     try {
                         List<Game> games = JsonUtil.getGames(mJsonCache.getContent());
@@ -232,11 +265,11 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
 
         if(isPopularTab()){
 
-            APIClient.getPopularGamesRequest(mRequestQueue, listener, PAGE_SIZE, offset);
+            APIClient.getPopularGamesRequest(mRequestQueue, listener, PAGE_SIZE, mOffset);
 
         }else if(isComingTab()){
 
-            APIClient.getCommingGamesRequest(mRequestQueue, listener, PAGE_SIZE, offset);
+            APIClient.getCommingGamesRequest(mRequestQueue, listener, PAGE_SIZE, mOffset);
 
         }else if(isFavoriteTab()){
 

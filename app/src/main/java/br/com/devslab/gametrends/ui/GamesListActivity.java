@@ -2,6 +2,8 @@ package br.com.devslab.gametrends.ui;
 
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -37,19 +39,30 @@ public class GamesListActivity extends AppCompatActivity implements GamesFragmen
 
         configInterstitialAd();
 
-        TabAdapter adapter = new TabAdapter( getSupportFragmentManager());
-        adapter.addTab( GamesFragment.newInstance(GamesFragment.QueryTypeEnum.POPULAR) , getResources().getString(R.string.tab_popular));
+        ViewPager viewPager = findViewById(R.id.abas_view_pager);
+
+        TabAdapter adapter = new TabAdapter(getSupportFragmentManager());
+        adapter.addTab( GamesFragment.newInstance(GamesFragment.QueryTypeEnum.POPULAR), getResources().getString(R.string.tab_popular));
         adapter.addTab( GamesFragment.newInstance(GamesFragment.QueryTypeEnum.COMING), getResources().getString(R.string.tab_coming));
         adapter.addTab( GamesFragment.newInstance(GamesFragment.QueryTypeEnum.FAVORITE), getResources().getString(R.string.tab_favorite));
-
-        ViewPager viewPager = findViewById(R.id.abas_view_pager);
         viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(adapter.getCount());
 
         TabLayout tabLayout = findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
         configureSyncDataJob();
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+    }
+
+    /*
+    *
+    * This is a solution to grab the tag created by FragmentPagerAdapter.
+    * This basic class is very poor in implementation and forces the developer to copy the
+     * makeFragmentName method because it is private.
+    * */
+    private static String getAdapterFragmentTag(int viewId, long id) {
+        return "android:switcher:" + viewId + ":" + id;
     }
 
     private void configureSyncDataJob(){
@@ -59,7 +72,7 @@ public class GamesListActivity extends AppCompatActivity implements GamesFragmen
                 .setTag("SyncDataJob")
                 .setRecurring(true)
                 .setLifetime(Lifetime.FOREVER)
-                .setTrigger(Trigger.executionWindow(2, 10))
+                .setTrigger(Trigger.executionWindow(5, 60))
                 .setReplaceCurrent(false)
                 .setRetryStrategy(RetryStrategy.DEFAULT_EXPONENTIAL)
                 .setConstraints(Constraint.ON_UNMETERED_NETWORK, Constraint.DEVICE_CHARGING)

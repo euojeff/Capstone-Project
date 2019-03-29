@@ -50,32 +50,32 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
         void onCardClick(Game game);
     }
 
-    private List<Game> listaGames;
+    private List<Game> mGameList;
     private CardGameAdapterOnclickHandler mHandler;
     private Context mContext;
     private RequestQueue mRequestQueue;
 
     public void addItens(List<Game> moreItens) {
-        listaGames.addAll(moreItens);
+        mGameList.addAll(moreItens);
         notifyDataSetChanged();
     }
 
     public void clearGames(){
-        Integer size = listaGames.size();
-        listaGames.clear();
+        Integer size = mGameList.size();
+        mGameList.clear();
         notifyItemRangeRemoved(0, size);
     }
 
     public CardGameAdapter(CardGameAdapterOnclickHandler handler, Context context, RequestQueue requestQueue){
         this.mHandler = handler;
         this.mContext = context;
-        this.listaGames = new ArrayList<>();
+        this.mGameList = new ArrayList<>();
         this.mRequestQueue = requestQueue;
     }
 
     @Override
     public int getItemCount() {
-        return listaGames.size();
+        return mGameList.size();
     }
 
     @Override
@@ -97,11 +97,11 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
         holder.mCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mHandler.onCardClick(listaGames.get(posicao));
+                mHandler.onCardClick(mGameList.get(posicao));
             }
         });
 
-        Game game = listaGames.get(i);
+        Game game = mGameList.get(i);
         idCover = game.getCoverId();
         holder.title.setText(game.getName());
         holder.rating.setText(Util.formatedRate(game.getRating(), mContext));
@@ -110,5 +110,9 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
         String urlImg = APIClient.getImgUrl(idCover);
         Glide.with(mContext).clear(holder.cover);
         Glide.with(mContext).load(urlImg).into(holder.cover);
+    }
+
+    public List<Game> getGameList() {
+        return mGameList;
     }
 }
