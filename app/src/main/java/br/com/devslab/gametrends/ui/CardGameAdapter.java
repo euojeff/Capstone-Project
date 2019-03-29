@@ -47,7 +47,7 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
     }
 
     public interface CardGameAdapterOnclickHandler {
-        void onCardClick(Game game);
+        void onCardClick(Game game, View transitionView);
     }
 
     private List<Game> mGameList;
@@ -97,7 +97,7 @@ class CardGameAdapter extends RecyclerView.Adapter <CardGameAdapter.CardGameHold
         holder.mCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mHandler.onCardClick(mGameList.get(posicao));
+                mHandler.onCardClick(mGameList.get(posicao), holder.cover);
             }
         });
 

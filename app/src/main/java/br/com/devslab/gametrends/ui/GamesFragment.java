@@ -340,9 +340,9 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
         }
     }
 
-    public void onSelectGame(Game game) {
+    public void onSelectGame(Game game, View transitionView) {
         if (mListener != null) {
-            mListener.onRequestOpenGameDetail(game);
+            mListener.onRequestOpenGameDetail(game, transitionView);
         }
     }
 
@@ -364,8 +364,8 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
     }
 
     @Override
-    public void onCardClick(Game game) {
-        onSelectGame(game);
+    public void onCardClick(Game game, View transitionView) {
+        onSelectGame(game, transitionView);
     }
 
     /**
@@ -379,6 +379,6 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onRequestOpenGameDetail(Game game);
+        void onRequestOpenGameDetail(Game game, View transitionView);
     }
 }

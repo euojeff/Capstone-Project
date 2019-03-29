@@ -18,6 +18,7 @@
             android:scaleType="centerCrop"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintEnd_toStartOf="@id/guideline"
+            android:transitionName="@string/transition"/>
             android:contentDescription="@string/content_description_game_cover" />
 
         <android.support.constraint.Guideline

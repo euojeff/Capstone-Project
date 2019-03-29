@@ -1,12 +1,15 @@
 package br.com.devslab.gametrends.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 
 import com.firebase.jobdispatcher.Constraint;
 import com.firebase.jobdispatcher.FirebaseJobDispatcher;
@@ -30,6 +33,8 @@ public class GamesListActivity extends AppCompatActivity implements GamesFragmen
 
     private FirebaseAnalytics mFirebaseAnalytics;
     private InterstitialAd mInterstitialAd;
+    private View mTransitionItemView;
+    private Game mGameToOpen;
 
 
     @Override
@@ -86,25 +91,47 @@ public class GamesListActivity extends AppCompatActivity implements GamesFragmen
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId(getResources().getString(R.string.ADMOB_INTERSTITIAL_ID));
         mInterstitialAd.loadAd(new AdRequest.Builder().build());
+
         mInterstitialAd.setAdListener(new AdListener() {
             @Override
             public void onAdClosed() {
                 // Load the next interstitial.
                 mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                openGame(mGameToOpen, mTransitionItemView);
             }
         });
     }
 
     @Override
-    public void onRequestOpenGameDetail(Game game) {
+    public void onRequestOpenGameDetail(Game game, View transitionItemView) {
+
+        mGameToOpen = game;
+        mTransitionItemView = transitionItemView;
 
         if (mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
+        }else{
+
+            openGame(mGameToOpen, mTransitionItemView);
+
         }
+    }
+
+    private void openGame(Game game, View transitionItemView){
 
         Intent intent = new Intent(this, GameDetailActivity.class);
         intent.putExtra(GameDetailActivity.EXTRA_GAME, game);
 
-        startActivity(intent);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+
+            Bundle bundle = ActivityOptionsCompat
+                    .makeSceneTransitionAnimation(this, transitionItemView, transitionItemView.getTransitionName())
+                    .toBundle();
+
+            startActivity(intent, bundle);
+
+        } else {
+            startActivity(intent);
+        }
     }
 }
