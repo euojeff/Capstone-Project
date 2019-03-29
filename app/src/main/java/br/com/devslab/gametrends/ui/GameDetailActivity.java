@@ -1,6 +1,7 @@
 package br.com.devslab.gametrends.ui;
 
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -30,6 +31,8 @@ import br.com.devslab.gametrends.database.entity.Game;
 import br.com.devslab.gametrends.database.entity.GameRelation;
 import br.com.devslab.gametrends.database.entity.PulseArticle;
 import br.com.devslab.gametrends.database.entity.Screenshot;
+import br.com.devslab.gametrends.database.viewmodel.LoadGameViewModel;
+import br.com.devslab.gametrends.database.viewmodel.LoadGameViewModelFactory;
 import br.com.devslab.gametrends.remote.APIClient;
 import br.com.devslab.gametrends.util.Util;
 import br.com.devslab.gametrends.widget.WidgetService;
@@ -98,8 +101,9 @@ public class GameDetailActivity extends AppCompatActivity implements CardScreens
         loadPulse(mGame);
         populateData(mGame);
 
-
-        mDb.gameDao().loadGame(mGame.getId()).observe(this, new Observer<GameRelation>() {
+        LoadGameViewModelFactory factory = new LoadGameViewModelFactory(getApplication(), mGame.getId());
+        LoadGameViewModel viewModel = ViewModelProviders.of(this, factory).get(LoadGameViewModel.class);
+        viewModel.getGame().observe(this, new Observer<GameRelation>() {
             @Override
             public void onChanged(@Nullable GameRelation game) {
                 if(game != null){

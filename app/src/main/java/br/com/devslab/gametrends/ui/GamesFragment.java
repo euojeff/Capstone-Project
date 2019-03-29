@@ -3,6 +3,7 @@ package br.com.devslab.gametrends.ui;
 import br.com.devslab.gametrends.R;
 
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ import br.com.devslab.gametrends.database.config.AppDatabase;
 import br.com.devslab.gametrends.database.entity.Game;
 import br.com.devslab.gametrends.database.entity.GameRelation;
 import br.com.devslab.gametrends.database.entity.JsonCache;
+import br.com.devslab.gametrends.database.viewmodel.FavoritedGamesViewModel;
 import br.com.devslab.gametrends.remote.APIClient;
 import br.com.devslab.gametrends.util.JsonUtil;
 import br.com.devslab.gametrends.util.Util;
@@ -273,7 +275,8 @@ public class GamesFragment extends Fragment implements CardGameAdapter.CardGameA
 
         }else if(isFavoriteTab()){
 
-            mDb.gameDao().loadFavorited().observe(this, new Observer<List<GameRelation>>() {
+            FavoritedGamesViewModel viewModel = ViewModelProviders.of(this).get(FavoritedGamesViewModel.class);
+            viewModel.getFavoritedGames().observe(this, new Observer<List<GameRelation>>() {
                 @Override
                 public void onChanged(@Nullable List<GameRelation> gamesRelations) {
                     if(gamesRelations != null){
